@@ -1,0 +1,30 @@
+[project]
+name = "klinikatlas-search"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Pia Baronetzky", email = "pia@baronetzky.org" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "bs4>=0.0.2",
+    "de-klinikatlas",
+    "httpx>=0.28.1",
+    "requests>=2.34.2",
+]
+
+[project.scripts]
+klinikatlas-search = "klinikatlas_search:main"
+
+[build-system]
+requires = ["uv_build>=0.12.9,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+de-klinikatlas = { git = "https://github.com/bundesAPI/klinikatlas-api.git", subdirectory = "python-client" }
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.3.0",
+]

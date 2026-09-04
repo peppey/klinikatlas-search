@@ -1,2 +1,3 @@
-# klinikatlas-search
-Full text search for the Bundes-Klinik-Atlas
+# Klinikatlas Search
+
+![Vision](docs/vision.jpeg)
