@@ -33,6 +33,9 @@ build-backend = "uv_build"
 [tool.uv.sources]
 de-klinikatlas = { git = "https://github.com/bundesAPI/klinikatlas-api.git", subdirectory = "python-client" }
 
+[[tool.uv.index]]
+url = "https://download.pytorch.org/whl/cu128"
+
 [dependency-groups]
 dev = [
     "ipykernel>=7.3.0",
