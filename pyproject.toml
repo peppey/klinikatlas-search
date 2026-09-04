@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.10"
 dependencies = [
+    "bs4>=0.0.2",
     "de-klinikatlas",
     "httpx>=0.28.1",
     "requests>=2.34.2",
