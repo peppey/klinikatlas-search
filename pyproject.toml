@@ -17,7 +17,8 @@ dependencies = [
     "openpyxl>=3.1.5",
     "pandas>=2.3.3",
     "requests>=2.34.2",
-    "torch>=2.14.0",
+    "safetensors>=0.8.0",
+    "torch==2.11.0",
     "tqdm>=4.70.0",
     "transformers>=5.16.1",
 ]
