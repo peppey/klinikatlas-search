@@ -41,11 +41,6 @@ def _():
     )
 
 
-@app.cell
-def _():
-    return
-
-
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -1126,9 +1121,7 @@ def _(mo):
 
     All keywords (for the moment regardless of they are of category PROBLEM, TEST or TREATMENT) are compared with the embeddings of the ICD and OPS codes. They are only taken into account if they have a similarity score of at least 0.7 with one of these embeddings.
 
-    This filters out irrelevant keywords (like Wäsche) quite well. On the other hand, "Geburthilfe" is not matched to any ops code.
-
-    Later, this should be expanded with the list of specialties.
+    This filters out irrelevant keywords (like Wäsche) quite well. On the other hand, "Geburthilfe" is not matched to any ops code. This could be because OPS codes are very specific (e.g "Spontane und vaginale operative Entbindung bei Beckenendlage: Spontane Entbindung ohne Komplikationen" instead of "Entbindung") and it could be that "Geburtshilfe" would match better with a specialty which are going to be added later.
     """)
     return
 
