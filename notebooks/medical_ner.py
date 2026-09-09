@@ -21,7 +21,10 @@ def _():
         FileadminJsonIcdCodesJsonGet200ResponseInner as klinikatlas_datatype
     )
 
+    from typing import Any
+
     return (
+        Any,
         AutoModel,
         AutoModelForTokenClassification,
         AutoTokenizer,
@@ -38,12 +41,17 @@ def _():
     )
 
 
+@app.cell
+def _():
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     # Named entity recognition of medical keywords
 
-    This notebook is an attempt to extract diagnoses, treatments, and specialties (which we can all use in our search) from arbitrary queries.
+    This notebook is an attempt to extract diagnoses and treatments (which we can all use in our search) from arbitrary queries.
     """)
     return
 
@@ -51,14 +59,291 @@ def _(mo):
 @app.cell
 def _():
     queries = [
-            "Ich habe seit mehreren Tagen starke Kopfschmerzen "
-            "und Schwindel und brauche ein MRT.",
-            "Knie-OP Chirurgie in München",
-            "Ich habe starke Kopfschmerzen und Schwindel und brauche ein MRT.",
-            "Ich habe starkeKopfschmerzen und Schwindel.",
-            "Ich habe starke KopfschmerzenundSchwindel.",
-            "Ich habe heute morgen die Wäsche aufgehängt",
-            ""
+        # ============================================================
+        # Neurologie / MRT
+        # ============================================================
+        "Ich habe seit mehreren Tagen starke Kopfschmerzen "
+        "und Schwindel und brauche ein MRT.",
+
+        "Ich habe starke Kopfschmerzen und Schwindel und brauche ein MRT.",
+
+        "Ich habe starke Kopfschmerzen und Schwindel.",
+
+        "Ich habe starkeKopfschmerzen und Schwindel.",
+
+        "Ich habe starke KopfschmerzenundSchwindel.",
+
+        "Seit Tagen Kopfschmerzen und Schwindel.",
+
+        "Untersuchung wegen starker Kopfschmerzen.",
+
+        "MRT vom Kopf wegen Kopfschmerzen.",
+
+        "MRT Gehirn",
+
+        "Kernspintomographie Kopf",
+
+        "Neurologie und MRT",
+
+        "Krankenhaus für neurologische Untersuchungen",
+
+        "Ich brauche eine neurologische Untersuchung.",
+
+        "Schwindel und Kopfschmerzen neurologisch abklären lassen.",
+
+
+        # ============================================================
+        # Orthopädie / Knie
+        # ============================================================
+        "Knie-OP Chirurgie in München",
+
+        "Ich brauche eine Operation am Knie.",
+
+        "Knieoperation",
+
+        "Operation am Kniegelenk",
+
+        "Kniechirurgie in München",
+
+        "Orthopädische Klinik für Knieoperationen",
+
+        "Krankenhaus für Knie-OP",
+
+        "Meniskus Operation",
+
+        "Kreuzband OP",
+
+        "Knieprothese",
+
+        "Kniegelenkersatz",
+
+        "Ich habe starke Knieschmerzen und brauche eine Untersuchung.",
+
+
+        # ============================================================
+        # Geburtshilfe
+        # ============================================================
+        "Geburtshilfe Nürnberg",
+
+        "Geburtsklinik in München",
+
+        "Krankenhaus für Geburtshilfe",
+
+        "Ich suche ein Krankenhaus für die Geburt.",
+
+        "Geburt im Krankenhaus",
+
+        "Entbindungsklinik",
+
+        "Geburtsstation",
+
+        "Kreißsaal in München",
+
+        "Schwangerschaft und Geburt",
+
+        "Klinik mit Geburtshilfe",
+
+
+        # ============================================================
+        # Kardiologie
+        # ============================================================
+        "Krankenhaus für Herzkrankheiten",
+
+        "Kardiologie in München",
+
+        "Ich brauche eine Untersuchung meines Herzens.",
+
+        "Herzkatheter Untersuchung",
+
+        "Herzprobleme im Krankenhaus untersuchen lassen",
+
+        "Kardiologische Klinik",
+
+        "Herzklinik in München",
+
+        "Untersuchung wegen Herzrhythmusstörungen",
+
+
+        # ============================================================
+        # Unfallchirurgie / Notaufnahme
+        # ============================================================
+        "Unfallchirurgie in München",
+
+        "Krankenhaus nach einem Unfall",
+
+        "Ich habe mich beim Fahrradfahren verletzt.",
+
+        "Ich bin gestürzt und brauche eine Untersuchung.",
+
+        "Notaufnahme in München",
+
+        "Krankenhaus für Knochenbrüche",
+
+        "Fraktur behandeln lassen",
+
+        "Behandlung eines gebrochenen Arms",
+
+        "Unfallchirurgie und Orthopädie",
+
+
+        # ============================================================
+        # Innere Medizin
+        # ============================================================
+        "Krankenhaus für Innere Medizin",
+
+        "Internistische Klinik in München",
+
+        "Ich brauche eine internistische Untersuchung.",
+
+        "Behandlung von Magenproblemen im Krankenhaus",
+
+        "Krankenhaus für Bauchschmerzen",
+
+        "Untersuchung wegen starken Bauchschmerzen",
+
+        "Gastroenterologie in München",
+
+        "Magen-Darm Untersuchung",
+
+
+        # ============================================================
+        # Chirurgie allgemein
+        # ============================================================
+        "Chirurgische Klinik in München",
+
+        "Ich brauche eine Operation.",
+
+        "Krankenhaus für chirurgische Eingriffe",
+
+        "Allgemeinchirurgie",
+
+        "Chirurgie Krankenhaus München",
+
+        "Operation im Krankenhaus",
+
+
+        # ============================================================
+        # Onkologie
+        # ============================================================
+        "Krankenhaus für Krebsbehandlung",
+
+        "Onkologie in München",
+
+        "Krebsbehandlung im Krankenhaus",
+
+        "Tumorzentrum München",
+
+        "Klinik für Onkologie",
+
+        "Chemotherapie Krankenhaus",
+
+
+        # ============================================================
+        # Augen
+        # ============================================================
+        "Augenklinik in München",
+
+        "Krankenhaus für Augenoperationen",
+
+        "Augenoperation",
+
+        "Grauer Star Operation",
+
+        "Netzhautoperation",
+
+        "Augenheilkunde Krankenhaus",
+
+
+        # ============================================================
+        # HNO
+        # ============================================================
+        "HNO Klinik in München",
+
+        "Krankenhaus für HNO",
+
+        "Hals Nasen Ohren Klinik",
+
+        "Operation an der Nase",
+
+        "Nasennebenhöhlen Operation",
+
+        "HNO Untersuchung",
+
+
+        # ============================================================
+        # Urologie
+        # ============================================================
+        "Urologie in München",
+
+        "Krankenhaus für urologische Erkrankungen",
+
+        "Nierensteine behandeln lassen",
+
+        "Urologische Klinik",
+
+        "Operation an der Niere",
+
+        "Urologische Untersuchung",
+
+
+        # ============================================================
+        # Psychiatrie / Psychosomatik
+        # ============================================================
+        "Psychiatrische Klinik in München",
+
+        "Krankenhaus für psychische Erkrankungen",
+
+        "Psychiatrische Behandlung",
+
+        "Psychosomatische Klinik",
+
+        "Stationäre psychiatrische Behandlung",
+
+        "Klinik für Psychiatrie",
+
+
+        # ============================================================
+        # Verschiedene Schreibweisen / Suchmaschinen-artig
+        # ============================================================
+        "MRT München",
+
+        "MRT Kopf München",
+
+        "Neurologie München",
+
+        "Knie OP München",
+
+        "Kniechirurgie München",
+
+        "Geburtshilfe München",
+
+        "Herzklinik München",
+
+        "Notaufnahme München",
+
+        "Unfallchirurgie München",
+
+        "Gastroenterologie München",
+
+
+        # ============================================================
+        # Bewusst irrelevante Queries
+        # ============================================================
+        "Ich habe heute morgen die Wäsche aufgehängt",
+
+        "Wie wird das Wetter morgen?",
+
+        "Ich möchte morgen einkaufen gehen.",
+
+        "Was kann ich heute Abend kochen?",
+
+        "Ich suche ein gutes Restaurant in München.",
+
+        "Wie komme ich zum Hauptbahnhof?",
+
+        "Mein Fahrrad hat einen platten Reifen.",
+
+        "Ich möchte einen neuen Laptop kaufen.",
     ]
     return (queries,)
 
@@ -74,7 +359,7 @@ def _(mo):
 @app.cell
 def _():
     NER_MODEL_NAME = "HUMADEX/german_medical_ner"
-    SCORE_THRESHOLD = 0.7
+    SCORE_THRESHOLD = 0.5
     return NER_MODEL_NAME, SCORE_THRESHOLD
 
 
@@ -484,7 +769,7 @@ def _(SCORE_THRESHOLD, extract_medical_keywords, load_medical_ner, queries):
             )
 
             keywords_in_queries.append(keywords)
-    
+
             print(keywords)
     return device, keywords_in_queries
 
@@ -617,9 +902,7 @@ def _(
 
 
 @app.cell
-def _(F, torch):
-    from typing import Any
-
+def _(Any, F, torch):
     def find_similar_codes(
         keywords: list[str],
         query_embeddings: torch.Tensor,
@@ -686,7 +969,7 @@ def _(F, torch):
 
         return results
 
-    return Any, find_similar_codes
+    return (find_similar_codes,)
 
 
 @app.cell
@@ -833,6 +1116,20 @@ def _(
 @app.cell
 def _(results):
     results
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Results
+
+    All keywords (for the moment regardless of they are of category PROBLEM, TEST or TREATMENT) are compared with the embeddings of the ICD and OPS codes. They are only taken into account if they have a similarity score of at least 0.7 with one of these embeddings.
+
+    This filters out irrelevant keywords (like Wäsche) quite well. On the other hand, "Geburthilfe" is not matched to any ops code.
+
+    Later, this should be expanded with the list of specialties.
+    """)
     return
 
 
