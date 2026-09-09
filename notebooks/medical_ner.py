@@ -57,7 +57,8 @@ def _():
             "Ich habe starke Kopfschmerzen und Schwindel und brauche ein MRT.",
             "Ich habe starkeKopfschmerzen und Schwindel.",
             "Ich habe starke KopfschmerzenundSchwindel.",
-            "Ich habe heute morgen die Wäsche aufgehängt"
+            "Ich habe heute morgen die Wäsche aufgehängt",
+            ""
     ]
     return (queries,)
 
@@ -587,7 +588,7 @@ def _(klinikatlas_datatype):
 def _(icd_data, ops_data, preprocess_codes):
     preprocessed_icd_data = preprocess_codes(icd_data)
     preprocessed_ops_data = preprocess_codes(ops_data)
-    return (preprocessed_icd_data,)
+    return preprocessed_icd_data, preprocessed_ops_data
 
 
 @app.cell
@@ -600,22 +601,30 @@ def _(
     bs = 32
 
     icd_embeddings = german_medical_embedding(preprocessed_icd_data, bs, embedding_tokenizer, embedding_model)
-    return (icd_embeddings,)
+    return bs, icd_embeddings
 
 
 @app.cell
-def _():
-    return
+def _(
+    bs,
+    embedding_model,
+    embedding_tokenizer,
+    german_medical_embedding,
+    preprocessed_ops_data,
+):
+    ops_embeddings = german_medical_embedding(preprocessed_ops_data, bs, embedding_tokenizer, embedding_model)
+    return (ops_embeddings,)
 
 
 @app.cell
-def _(F, torch):
+def _(F, icd_embeddings, torch):
     def show_results_for_query(
-        problem_embeddings_from_query: torch.Tensor,
-        icd_embeddings: torch.Tensor,
+        embeddings_from_query: torch.Tensor,
+        embeddings: torch.Tensor,
         keywords_in_queries: list[dict],
         query_idx: int,
-        preprocessed_icd_data: list
+        preprocessed_data: list,
+        key: str = "PROBLEM"
     ) -> None:
         """
         Find and print the most similar ICD diagnosis for each problem
@@ -628,13 +637,13 @@ def _(F, torch):
 
         Parameters
         ----------
-        problem_embeddings_from_query : torch.Tensor
+        embeddings_from_query : torch.Tensor
             Embeddings of the individual problems extracted from the query.
             Expected shape: (n_problems, embedding_dim).
 
-        icd_embeddings : torch.Tensor
-            Embeddings of all ICD diagnoses.
-            Expected shape: (n_icd_codes, embedding_dim).
+        embeddings : torch.Tensor
+            Embeddings of all ICD diagnoses or OPS codes.
+            Expected shape: (n_codes, embedding_dim).
 
         keywords_in_queries : list[dict]
             List containing the extracted keywords for each query. Each
@@ -644,9 +653,12 @@ def _(F, torch):
         query_idx : int
             Index of the query whose problem keywords are being evaluated.
 
-        preprocessed_icd_data : list
-            List of preprocessed ICD diagnoses corresponding to the rows
+        preprocessed_data : list
+            List of preprocessed ICD diagnoses or OPS codes corresponding to the rows
             of `icd_embeddings`.
+
+        key: str
+            PROBLEM for ICD Diagnosis keywords. TREATMENT for OPS keywords
 
         Returns
         -------
@@ -655,26 +667,26 @@ def _(F, torch):
             similarity for each problem.
         """
 
-        for idx in range(len(problem_embeddings_from_query)):
+        for idx in range(len(embeddings_from_query)):
 
             similarities = F.cosine_similarity(
-                problem_embeddings_from_query[idx],
+                embeddings_from_query[idx],
                 icd_embeddings,
                 dim=1
             )
 
             print(
                 "Keyword: "
-                + str(keywords_in_queries[query_idx]["PROBLEM"][idx])
+                + str(keywords_in_queries[query_idx][key][idx])
             )
 
             best_idx = torch.argmax(similarities).item()
 
-            most_similar_diagnosis = preprocessed_icd_data[best_idx]
+            most_similar = preprocessed_data[best_idx]
 
             print(
-                "ICD Diagnosis: "
-                + str(most_similar_diagnosis)
+                "Most similar " + str(key) + ": "
+                + str(most_similar)
             )
 
             best_similarity = similarities[best_idx].item()
@@ -688,30 +700,77 @@ def _(F, torch):
 
 
 @app.cell
+def _(keywords_in_queries):
+    keywords_in_queries
+    return
+
+
+@app.cell
 def _(
     embedding_model,
     embedding_tokenizer,
     german_medical_embedding,
     icd_embeddings,
     keywords_in_queries,
+    ops_embeddings,
     preprocessed_icd_data,
+    preprocessed_ops_data,
     queries,
     show_results_for_query,
 ):
     for query_idx in range(len(queries)):
-        problem_embeddings_from_query = german_medical_embedding(keywords_in_queries[query_idx]["PROBLEM"], 1, 
+
+        diagnosis_keywords = keywords_in_queries[query_idx]["PROBLEM"]
+        treatment_keywords = keywords_in_queries[query_idx]["TREATMENT"]
+        test_keywords = keywords_in_queries[query_idx]["TEST"]
+
+
+        if len(diagnosis_keywords) > 0:
+            diagnosis_embeddings_from_query = german_medical_embedding(diagnosis_keywords, 1, 
                                  embedding_tokenizer, embedding_model)
+
+        if len(treatment_keywords) > 0:
+            treatment_embeddings_from_query = german_medical_embedding(treatment_keywords, 1, embedding_tokenizer, embedding_model)
+
+
+        if len(test_keywords) > 0:
+            test_embeddings_from_query = german_medical_embedding(test_keywords, 1, embedding_tokenizer, embedding_model)
 
         print("Results for " + str(queries[query_idx]))
         print()
-        if len(problem_embeddings_from_query) > 0:
+        if len(diagnosis_keywords) > 0:
             show_results_for_query(
-        problem_embeddings_from_query=problem_embeddings_from_query,
-        icd_embeddings=icd_embeddings,
+        embeddings_from_query=diagnosis_embeddings_from_query,
+        embeddings=icd_embeddings,
         keywords_in_queries=keywords_in_queries,
         query_idx=query_idx,
-        preprocessed_icd_data=preprocessed_icd_data
+        preprocessed_data=preprocessed_icd_data,
+        key = "PROBLEM"
     )
+
+        if len(treatment_keywords) > 0:
+                    show_results_for_query(
+        embeddings_from_query=treatment_embeddings_from_query,
+        embeddings=ops_embeddings,
+        keywords_in_queries=keywords_in_queries,
+        query_idx=query_idx,
+        preprocessed_data=preprocessed_ops_data,
+        key = "TREATMENT"
+    )
+
+
+        if len(test_keywords) > 0:
+            show_results_for_query(
+        embeddings_from_query=test_embeddings_from_query,
+        embeddings=ops_embeddings,
+        keywords_in_queries=keywords_in_queries,
+        query_idx=query_idx,
+        preprocessed_data=preprocessed_ops_data,
+        key = "TEST"
+    )
+
+
+
     
     return
 
