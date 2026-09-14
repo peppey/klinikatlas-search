@@ -1,0 +1,992 @@
+kusel
+alzey
+jesteburg
+schongau
+köthen(anhalt)
+stralsund
+luckau, nl
+heide
+schmalkalden
+ansbach, mittelfranken
+rottweil
+damme, dümmer
+kirn
+eberswalde
+xanten
+nürtingen
+winnenden, württemberg
+herford
+bernau bei berlin
+volkmarsen
+schwentinental
+nidda
+kyritz
+achim bei bremen
+bad honnef
+bad ems
+uhlstädt-kirchhasel
+gelnhausen
+winsen(luhe)
+neustadt in holstein
+nordenham
+helgoland
+hohenfelde bei bad doberan
+jena
+lahnstein
+mühldorf
+freudenstadt
+lindau(bodensee)
+delitzsch
+schwarzach, niederbayern
+oberammergau
+ronneburg, thüringen
+bremen
+oelde, westfalen
+unna
+werdohl
+neustadt an der aisch
+magdeburg
+sulzbach-rosenberg
+ostfildern
+bad arolsen
+hettstedt, sachsen-anhalt
+beeskow
+hemer
+immenstadt i. allgäu
+esslingen am neckar
+lippstadt
+dessau-roßlau
+strausberg
+paderborn
+rendsburg
+bad bramstedt
+merzig
+göttingen, niedersachs
+dierdorf
+annaberg-buchholz
+steinheim, westfalen
+jülich
+siegen
+krefeld-uerdingen
+bassum
+idstein
+bramsche, hase
+penzberg
+menden
+waiblingen, rems
+gunzenhausen am altmühlsee
+kehl, rhein
+wangen im allgäu
+woltersdorf bei erkner
+hersbruck
+erlenbach am main
+kirchen(sieg)
+winterberg, westfalen
+lauchhammer
+lauf an der pegnitz
+uelzen, lüneburger heide
+ingolstadt, donau
+cham, oberpfalz
+bitburg
+colditz
+datteln
+georgsmarienhütte
+hessisch oldendorf
+bad bentheim
+eutin
+wörth an der donau
+itzehoe
+baden-baden
+wasserburg am inn
+schorndorf, württemberg
+blankenhain, thüringen
+feldafing
+bad heilbrunn
+attendorn
+starnberg
+bad gandersheim
+rodewisch
+fulda
+schönebeck(elbe)
+halle(westfalen)
+soltau
+wittmund
+gauting
+brunsbüttel
+dorfen
+münchen
+wyk auf föhr
+herzberg, elster
+lübben(spreewald)
+bünde
+haar, kreis münchen
+lübeck
+plauen, vogtland
+beckum, westfalen
+ebermannstadt
+kirchheim unter teck
+bad bellingen, baden
+halle(saale)
+soest, westfalen
+lübbecke, westfalen
+speyer
+bad rothenfelde
+bad orb
+oberndorf am neckar
+berg
+bad endorf, oberbayern
+diepholz
+achern, baden
+heide, holst
+prüm
+groß-gerau
+detmold
+hardheim, odenw
+viersen
+bad saarow
+bad fallingbostel
+grevenbroich
+bad oldesloe
+kaufungen, hess
+remscheid
+würzburg
+zeitz
+herne
+asbach, westerwald
+nördlingen
+dachau
+singen(hohentwiel)
+nienburg(weser)
+burg bei magdeburg
+anklam
+schwetzingen
+höchstadt an der aisch
+langen(hessen)
+bischofswerda
+bad abbach
+halberstadt
+bad rodach
+radeburg
+duderstadt, niedersachs
+lostau
+lohr am main
+bad füssing
+eberbach, baden
+hartmannsdorf bei chemnitz, sachsen
+wittlich
+völklingen
+arnsberg, westfalen
+landshut, isar
+plettenberg
+seefeld, oberbayern
+aschau i. chiemgau
+schleswig
+ludwigsburg, württemberg
+korbach
+offenbach am main
+oettingen in bayern
+wittingen, niedersachs
+wallerfangen
+salzwedel
+wiesbaden
+norderney
+buchholz in der nordheide
+prien am chiemsee
+riesa
+trier
+schwäbisch hall
+lahr, schwarzwald
+duisburg-homberg
+oschatz
+großschweidnitz
+balingen
+bad griesbach im rottal
+leverkusen
+ganderkesee
+schmallenberg
+marktredwitz
+königstein im taunus
+heinsberg, rheinland
+ravensburg, württemberg
+marl, westfalen
+rostock
+villingen-schwenningen
+stadtbergen
+henstedt-ulzburg
+viernheim
+hagen, westfalen
+eisenach, thüringen
+bad tölz
+iserlohn
+mallersdorf-pfaffenberg
+schwerin, mecklenburg
+lengerich, westfalen
+buchen(odenwald)
+bad mergentheim
+gummersbach
+bernburg(saale)
+ansbach
+spremberg, nl
+gensingen
+kitzingen
+schwerin
+sinzig, rhein
+bad driburg
+langenfeld(rheinland)
+lüdenscheid
+hagenow
+grimma
+kronach, oberfr
+garmisch-partenkirchen
+coppenbrügge
+hofgeismar
+bad liebenstein
+rüdersdorf bei berlin
+bad urach
+friedrichshafen
+sonthofen, oberallgäu
+sonneberg, thüringen
+pfaffenhofen an der ilm
+brake(unterweser)
+neuss
+frankfurt(oder)
+neuruppin
+cottbus
+regensburg
+schopfheim
+reutlingen
+cloppenburg
+erkelenz
+königs wusterhausen
+püttlingen
+aichach
+freudenberg, westfalen
+hessisch lichtenau
+weimar, thüringen
+mülheim an der ruhr
+kamp-lintfort
+sundern(sauerland)
+hildesheim
+kiel
+neustadt bei coburg
+saarlouis
+nastätten
+neresheim
+neukirchen bei hl. blut
+lutherstadt wittenberg
+malente
+erbach, odenw
+bad soden am taunus
+kreischa bei dresden
+bergen auf rügen
+großhansdorf
+leun, lahn
+rosenheim, oberbayern
+langenau, württemberg
+bocholt
+witten
+neubrandenburg, mecklenburg
+mühlhausen/thüringen
+germersheim
+bleicherode
+meißen, sachsen
+ratingen
+kleve, niederrhein
+meiningen
+ludwigsfelde
+döbeln
+stolzenau, weser
+gera
+waldkirch, breisgau
+baiersbronn
+frankfurt am main
+wiesbaden-biebrich
+mannheim
+würselen
+kulmbach
+zwickau
+ueckermünde
+görlitz
+nagold
+forchheim, oberfr
+daun
+rothenburg/oberlausitz
+mainz am rhein
+füssen
+öhringen
+niefern-öschelbronn
+goslar
+geseke
+grafenau, niederbayern
+mechernich
+traunstein, oberbayern
+hürth, rheinland
+bad kreuznach
+schwaan
+freiberg, sachsen
+rotenburg an der fulda
+delmenhorst
+vogtsburg im kaiserstuhl
+bergisch gladbach
+süsel
+herdecke, ruhr
+niebüll
+bretten, baden
+sömmerda
+linz am rhein
+duisburg-huckingen
+maulbronn
+mettmann
+marsberg
+bad salzuflen
+grünstadt
+bad langensalza
+leezen bei schwerin, mecklenburg
+neustadt i. sam
+passau
+bad oeynhausen
+herzogenaurach
+borken, westfalen
+bingen am rhein
+rötz, oberpfalz
+brandenburg an der havel
+münchen-flughafen
+neumünster
+münster, westfalen
+norderstedt
+oldenburg(oldb)
+eilenburg
+albstadt, württemberg
+altenkirchen(westerwald)
+ibbenbüren
+eschweiler, rheinland
+wertingen
+günzburg
+vilsbiburg
+kösching
+ratzeburg
+kandel, pfalz
+bad schönborn
+dinslaken
+neustadt am rübenberge
+donauwörth
+haselünne
+stadthagen
+preetz, holst
+hamburg
+oberhausen, rheinland
+burgwedel
+büdingen, hess
+bonn
+coesfeld
+marburg
+weilheim in oberbayern
+hilden
+ehingen(donau)
+kleinbartloff
+gailingen am hochrhein
+dülmen
+montabaur
+rheine
+heidelberg
+haldensleben
+kamen, westfalen
+greven, westfalen
+bad segeberg
+neumünster, holst
+frechen
+peine
+seeheim-jugenheim
+pirmasens
+erding
+bad reichenhall
+hattingen, ruhr
+flensburg
+oberviechtach
+fürth, bayern
+heilbad heiligenstadt
+vechta
+höxter
+pasewalk
+harsewinkel
+kirchheimbolanden
+aachen
+ichenhausen
+bonn - bad godesberg
+sigmaringen
+aue, sachsen
+pfarrkirchen, niederbayern
+bayreuth
+mainburg
+donaueschingen
+meschede
+crailsheim
+bad harzburg
+bonn-bad godesberg
+warstein
+nittenau
+halle (saale)
+rudolstadt
+ludwigslust, mecklenburg
+görlitz, neiße
+recklinghausen, westfalen
+lilienthal bei bremen
+klingenmünster
+birkenfeld, nahe
+bad bergzabern
+wermsdorf
+duisburg
+gütersloh
+lorsch, hess
+mittweida
+northeim
+eggenfelden
+frankenthal(pfalz)
+bad klosterlausnitz
+damp
+moers
+celle
+augsburg, bayern
+zwenkau
+stadtroda
+dillenburg
+ebensfeld
+burgau, schwab
+sulzbach, saar
+dortmund
+brakel, westfalen
+gronau(leine)
+herrenberg im gäu
+ilmenau, thüringen
+ottobeuren
+wesseling, rheinland
+quedlinburg
+warburg, westfalen
+offenburg
+kleve
+bad endbach
+husum, nordsee
+donaustauf
+gerolzhofen
+nordhausen, thüringen
+bad aibling
+kassel, hess
+kaiserslautern
+freiburg im breisgau
+sendenhorst
+bad hersfeld
+bad berka
+alzenau in unterfranken
+stendal
+sylt
+ingolstadt
+breisach am rhein
+tuttlingen
+plau am see
+göppingen
+aschaffenburg
+krefeld
+olbernhau
+neustadt an der weinstraße
+staßfurt
+pritzwalk
+hof, saale
+potsdam
+berlin
+radeberg, sachsen
+herrsching am ammersee
+arnstadt
+ursberg
+pirna
+koblenz
+gelsenkirchen
+wriezen
+rathenow
+varel, jadebusen
+bietigheim-bissingen
+markgröningen
+nauen
+sindelfingen
+bad schwalbach
+koblenz am rhein
+ahaus
+freising, oberbayern
+braunfels
+lehrte bei hannover
+amberg, oberpfalz
+heilbronn, neckar
+wartenberg, oberbayern
+löningen
+leer(ostfriesland)
+bitterfeld-wolfen
+oberwesel, rhein
+süderholz, vorpommern
+coburg
+bad belzig
+bützow
+tutzing
+eisenberg, thüringen
+burglengenfeld
+schömberg bei neuenbürg, württemberg
+gifhorn
+selters(westerwald)
+rüdesheim am rhein
+leonberg, württemberg
+bad schwartau
+zschopau
+lemgo
+viechtach
+pulsnitz
+herten, westfalen
+oberursel(taunus)
+tübingen
+worms
+rheda-wiedenbrück
+ebersbach-neugersdorf
+aurich, ostfriesland
+naila
+troisdorf
+hoyerswerda
+straubing
+geesthacht
+sebnitz
+norden, ostfriesl
+mayen
+seehausen(altmark)
+altdorf bei nürnberg
+gronau
+aalen, württemberg
+pforzheim
+emmerich am rhein
+rottenburg an der laaber
+zweibrücken, pfalz
+cuxhaven
+güstrow
+st. wendel, saar
+wolfhagen
+freyung, niederbayern
+weißenhorn
+alsfeld
+ribnitz-damgarten
+eckernförde
+kappeln, schlei
+bad kissingen
+hamm, westfalen
+bad wildbad
+gransee
+schwerte
+schwarzenbruck
+stadtsteinach
+schwabach
+andernach
+herzberg am harz
+beelitz, mark
+hagen
+solingen
+goch
+papenburg
+lichtenstein/sam
+werne
+bautzen, sachsen
+bad krozingen
+engelskirchen
+walsrode
+perleberg
+ehringshausen, dill
+kremmen
+deggendorf
+nürnberg
+oberaudorf
+krumbach(schwaben)
+erfurt
+roth, mittelfranken
+mühlacker
+velbert
+gronau(westfalen)
+bad nauheim
+memmingen
+altötting
+angermünde
+kaufbeuren
+ankum
+bad tennstedt
+landau an der isar
+coswig(anhalt)
+bad salzungen
+kipfenberg, oberbayern
+teterow
+bad staffelstein
+werneck
+otterndorf, niederelbe
+elsterwerda
+hausham
+murnau am staffelsee
+erlangen
+parchim
+dillingen an der donau
+cochem
+tauberbischofsheim
+schotten, hess
+bad neuenahr-ahrweiler
+eitorf
+bad homburg v d höhe
+vogtareuth
+leisnig
+neu-ulm
+lengenfeld unterm stein
+schwalmstadt
+geldern
+freiburg
+zerbst/anhalt
+fritzlar
+landstuhl
+hachenburg
+karlsburg bei greifswald
+weilburg
+werl
+essen, ruhr
+finsterwalde
+glauchau
+heidenheim an der brenz
+mutlangen
+hann. münden
+osterholz-scharmbeck
+demmin, hansestadt
+vilshofen
+seelow
+templin
+oldenburg in holstein
+böblingen
+meerbusch
+heilbronn
+bernkastel-kues
+greifswald
+enger, westfalen
+bad camberg
+nettetal
+nordhorn
+ulm, donau
+hamm
+altenburg, thüringen
+gießen, lahn
+rotthalmünster
+dannenberg(elbe)
+bamberg
+bad kötzting
+radevormwald
+saarburg, saar
+brannenburg
+lebach
+friesoythe
+volkach
+buxtehude
+wesel am rhein
+homburg, saar
+coswig bei dresden
+bad hindelang
+pegnitz
+scheßlitz
+weißwasser
+bad liebenzell
+landau in der pfalz
+wetzlar
+wegscheid
+titisee-neustadt
+mindelheim
+oranienburg
+boizenburg
+bergheim, erft
+merseburg
+quakenbrück
+bad bertrich
+münchberg, oberfr
+blaubeuren
+nürnberg, mittelfranken
+grevesmühlen
+bad lippspringe
+elmshorn
+gerlingen, württemberg
+salzkotten
+alfeld(leine)
+neumarkt in der oberpfalz
+meckenbeuren
+schweinfurt
+heidelberg, neckar
+borna bei leipzig
+greifswald, hansestadt
+fridolfing
+frankenberg(eder)
+sundern
+oschersleben(bode)
+neustadt an der donau
+stockach, baden
+olpe, biggesee
+bennewitz
+pfronten
+radebeul
+grünheide(mark)
+düsseldorf
+rotenburg(wümme)
+planegg
+forst(lausitz)
+einbeck
+bad brückenau
+kempen, niederrhein
+greiz
+tirschenreuth
+seesen
+weilmünster
+geilenkirchen
+wesertal
+berchtesgaden
+wilhelmshaven
+bad münder am deister
+ellwangen(jagst)
+dingolfing
+dorsten
+lüneburg
+zittau
+breitenbrunn/erzgebirge
+lauterbach(hessen)
+pinneberg
+kemnath
+st. ingbert
+sulingen
+meppen
+ebersberg, oberbayern
+bad lauterberg im harz
+gommern
+hildburghausen
+birkenwerder
+bremervörde
+minden, westfalen
+kronshagen
+stuttgart
+neuwied
+chemnitz, sachsen
+heppenheim(bergstraße)
+helmstedt
+dinkelsbühl
+trostberg
+mönchengladbach
+hameln
+kassel
+wismar, mecklenburg
+sankt augustin
+lörrach
+verden(aller)
+dresden
+biberach an der riß
+osnabrück
+kamenz
+calbe(saale)
+hermeskeil
+weener
+wernigerode
+rüsselsheim
+langenhagen, han
+bad friedrichshall
+saalfeld/saale
+stollberg/erzgebirge
+fürstenfeldbruck
+luckenwalde
+borkum
+leutenberg, thüringen
+wuppertal
+sande, kreis friesl
+teupitz
+erftstadt
+wolfratshausen
+naumburg(saale)
+göttingen
+kirchberg, sachsen
+bad neustadt a. d. saale
+schkeuditz
+schlüchtern
+torgau
+sangerhausen
+wolfsburg
+guben
+neuenbürg, württemberg
+burgebrach
+herne, westfalen
+lichtenfels, bayern
+bobingen
+eschwege
+bad windsheim
+rastatt
+kevelaer
+blaustein, württemberg
+gotha, thüringen
+lampertheim, hess
+rahden, westfalen
+laatzen bei hannover
+sondershausen, thüringen
+wittstock
+immenhausen, hess
+neunkirchen, saar
+lingen(ems)
+landsberg am lech
+reinbek
+fehmarn
+friedrichroda
+bochum
+westerstede
+emmendingen
+witzenhausen
+warendorf
+bad dürkheim
+altentreptow
+filderstadt
+bad elster
+ochsenfurt, unterfranken
+mainz
+gladbeck
+waltrop
+gehrden, han
+querfurt
+kempten (allgäu)
+bielefeld
+bad pyrmont
+emden, ostfriesland
+dormagen
+zwiesel
+steinfurt, westfalen
+waldbröl
+bad berleburg
+waren(müritz)
+arnsdorf bei dresden
+biedenkopf
+hofheim am taunus
+rodalben
+elbingerode(harz)
+stolberg
+bühl, baden
+nottuln
+melle, wiehengeb
+boppard
+hannover
+kelheim
+rottenburg am neckar
+werdau, sachsen
+gersfeld(rhön)
+brühl, rheinland
+friedberg, bayern
+olsberg
+weißenfels, saale
+prenzlau
+schrobenhausen
+wurzen
+harztor - neustadt
+allensbach
+schöneck/vogtland
+castrop-rauxel
+rockenhausen
+weinheim, bergstr
+eichstätt, bayern
+sinsheim, elsenz
+brilon
+pößneck
+lüdinghausen
+lünen
+weiden in der oberpfalz
+wolfenbüttel, niedersachs
+schwedt/oder
+waldshut-tiengen
+haltern am see
+diez
+überlingen
+groß-umstadt
+schwabmünchen
+simmerath
+treuenbrietzen
+bad bevensen
+stade, niederelbe
+bad könig
+schwandorf, bayern
+neustrelitz
+limburg an der lahn
+aschersleben, sachsen-anhalt
+darmstadt
+düren, rheinland
+bensheim
+hünfeld
+niesky
+wolgast
+köln
+bad wildungen
+ludwigshafen am rhein
+bad lauterberg
+karlsbad
+markt indersdorf
+sögel
+chemnitz
+gräfelfing
+lutherstadt eisleben
+wipperfürth
+siegburg
+wolfach
+münnerstadt
+eisenhüttenstadt
+vallendar
+bad düben
+saarbrücken
+leipzig
+mosbach, baden
+osterhofen, niederbayern
+bottrop
+schleiden, eifel
+usingen
+seligenstadt, hess
+isselburg-anholt
+buchloe
+malchin
+großenhain, sachsen
+wildeshausen
+konstanz
+weißenburg in bayern
+adorf/vogtland
+karlsruhe, baden
+bruchsal
+wermelskirchen
+bedburg-hau
+bremerhaven
+münsingen, württemberg
+hanau
+frankfurt
+simmern, hunsrück
+erwitte
+elzach
+rothenburg ob der tauber
+haßfurt
+lennestadt
+bogen, niederbayern
+halsbrücke
+fürstenwalde/spree
+apolda
+freital
+müllheim, baden
+lohne(oldenburg)
+plauen
+euskirchen
+hennigsdorf
+meisenheim, glan
+braunschweig
+suhl
+crivitz
+lich, hess
+löwenstein, württemberg
+oberstdorf
+bad rappenau
+wetter(ruhr)
+dernbach(westerwald)
+friedberg(hessen)
+ahlen, westfalen
+salzgitter
+idar-oberstein
+gardelegen
+senftenberg, nl
+vreden
+neuburg an der donau
+obernkirchen
+schwelm
