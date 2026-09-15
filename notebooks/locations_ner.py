@@ -20,7 +20,7 @@ def load_coordinates(query_params):
 
     country = "Deutschland"
 
-    place = locator.geocode(f"{query_params[city]}, {query_params[plz]}, {country}")
+    place = locator.geocode(f"{query_params["city"]}{", " + query_params["plz"] if query_params["plz"] else ""}, {country}")
 
     return place.latitude, place.longitude
 
