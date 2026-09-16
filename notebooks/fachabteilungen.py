@@ -25,15 +25,14 @@ def _():
     from deutschland.klinikatlas.api import default_api
     import requests
     from bs4 import BeautifulSoup
-    import notebooks.data_exploration_import as de
-
+    from feature_folder import data_exploration_import as de
 
     return BeautifulSoup, de, requests
 
 
 @app.cell
 def _(de):
-    tur = de.search_hospitals(rows=100)
+    tur = de.search_hospitals(rows=20)
     tur
     return (tur,)
 
@@ -68,7 +67,11 @@ def _(soup):
         print(item.get_text(strip=True))
     for item in allfach:
         print(item.get_text(strip=True))
-    
+    return
+
+
+@app.cell
+def _():
     return
 
 
