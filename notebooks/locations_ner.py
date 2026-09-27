@@ -34,26 +34,29 @@ def lookup_coordinates(possible_city_names, possible_plz):
         }]
             
     """
-    city = None
-    plz = None
+
+    reqs = []
     result = []
     if possible_city_names:
-        city = possible_city_names[0]
-    elif possible_plz:
-        plz = possible_plz[0]
-    if city or plz:
-        locator = Nominatim(user_agent="klinik-atlas") 
+        reqs.extend(possible_plz)
+    if possible_plz:
+        reqs.extend(possible_plz)
 
-        country = "Deutschland"
+    
+    locator = Nominatim(user_agent="klinik-atlas") 
+    country = "Deutschland"
 
-        place = locator.geocode(f"{city if city else plz}, {country}", timeout=60)
+    for req in reqs:
 
-        result.append({
-            "Search": f"{city if city else plz}",
-            "City": place.adress,
-            "Plz": plz,
-            "latlon": f"{place.latitude}{place.longitude}"
-        })
+        place = locator.geocode(f"{req}, {country}", timeout=60)
+
+        if place:
+            result.append({
+                "Search": req,
+                "City": place.adress,
+                "Plz": None,
+                "latlon": f"{place.latitude}{place.longitude}"
+            })
     return result
 
 def load_coordinates_by_name(possible_locations):
