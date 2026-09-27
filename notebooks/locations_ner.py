@@ -79,7 +79,7 @@ def load_coordinates_by_name(possible_locations):
     matching_coordinates = []
     for entity in possible_locations:
         for index, row in df.iterrows():
-            if entity.lower() in row["City"].lower():
+            if row["City"].lower().startswith(entity.lower()):
                 matching_coordinates.append({
                     "Search": row["City"],
                     "City":row["City"],
@@ -112,7 +112,7 @@ def load_coordinates_by_plz(possible_plz):
     matching_coordinates = []
     for entity in possible_plz:
         for index, row in df.iterrows():
-            if entity.lower() in row["Plz"].lower():
+            if entity == row["Plz"]:
                 matching_coordinates.append({
                     "Search": row["Plz"],
                     "City":row["City"],
@@ -134,7 +134,9 @@ def filter_five_digit_numbers(text_query):
         List with all 5 digit numbers in the text query
             
     """
-    plzs = re.findall("\D[0-9]{5}\D", text_query) 
+    pat = r'\D[0-9]{5}\D*'
+    plzs = re.findall(pat, text_query) 
+
     return [possible_plz[1:6] for possible_plz in plzs]
 
 def filter_one_per_city(locations, plzs):
@@ -203,7 +205,8 @@ def get_coordinates_from_entities(possible_location_entities, possible_plzs):
     existing_locations = load_coordinates_by_name(possible_location_entities)
     existing_plzs = load_coordinates_by_plz(possible_plzs)
 
-    if not existing_plzs and not existing_locations:
+    #does not look up coordinates for unmatched entities if atleast one entity was matched
+    if not existing_plzs and not existing_locations: 
         return lookup_coordinates(possible_location_entities, possible_plzs)
     
     else:
