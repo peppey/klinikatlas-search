@@ -1,54 +1,260 @@
 import re
+import pandas
+from flair.data import Sentence
+from flair.models import SequenceTagger
 from geopy.geocoders import Nominatim
 
 
-with open("hospital_locations.txt","r") as f:
-    hospitals = f.read().split('\n')
-f.close()
+tagger = SequenceTagger.load("flair/ner-german-large")
 
-def extract_locations(texts, model):
-    locations = []
-    docs = [model(text) for text in texts]
-    for doc in docs:
-        for ent in doc.ents:
-            if ent.label_ == 'LOC':
-                locations.append(ent.text)
-    return locations
+df = pandas.read_csv("hospital_locations.txt")
 
-def load_coordinates(query_params):
-    locator = Nominatim(user_agent="klinik-atlas") #might need to look into this for commerical use
+def lookup_coordinates(possible_city_names, possible_plz):
+    """search OpenStreetMap data for recognized entities.
+    Last resort if none of the entites were found in existing hospital list.
 
-    country = "Deutschland"
-
-    place = locator.geocode(f"{query_params["city"]}{", " + query_params["plz"] if query_params["plz"] else ""}, {country}")
-
-    return place.latitude, place.longitude
-
-def retrieve_possible_plz(entity):
-    plzs = re.findall("\D[0-9]{5}\D", entity) # not sure about more specific plz rules than "has to be 5 digit"
-    return [possible_plz[1:6] for possible_plz in plzs] #slice of only the number
-
-def check_city(entity):
-    # todo, not sure how this would look like. secondary NER model perhaps
-    return
-
-def determine_city(entity):
-    query_params = {}
-    possible_plzs = retrieve_possible_plz(entity)
-    if possible_plzs:
-        query_params["plz"] = possible_plzs[0] # take first viable number
-    possible_city_names = check_city(entity)
-    if possible_city_names:
-        query_params["city"] = possible_city_names[0] # take first viable name
-    return query_params
-
-def determine_location_query_parameter(possible_location_entities): #not sure yet how multiple entities should be handled
-    query_params = {"city": "", "plz":""}
-    for entity in possible_location_entities:
-        if entity.lower() in hospitals:
-            return entity
-        else:
-            query_params = determine_city(entity=entity)
+    
+    Parameters
+    ----------
+    possible_locations: List[String]
+        list of NER results
+    possible_plz: List[String]
+        list of regex results
+        
+    
+    Returns
+    -------
+    List
+        JSON style list of matching locations in the format below or []
+        [{
+            Search: entity extracted from query | NER entity or PLZ
+            City: city name or full address
+            Plz: zip code if available
+            latlon: latitude,longitude of found result 
+        }]
             
-    if query_params:
-        return load_coordinates(query_params)
+    """
+    city = None
+    plz = None
+    result = []
+    if possible_city_names:
+        city = possible_city_names[0]
+    elif possible_plz:
+        plz = possible_plz[0]
+    if city or plz:
+        locator = Nominatim(user_agent="klinik-atlas") 
+
+        country = "Deutschland"
+
+        place = locator.geocode(f"{city if city else plz}, {country}", timeout=60)
+
+        result.append({
+            "Search": f"{city if city else plz}",
+            "City": place.adress,
+            "Plz": plz,
+            "latlon": f"{place.latitude}{place.longitude}"
+        })
+    return result
+
+def load_coordinates_by_name(possible_locations):
+    """search existing base of hospital locations for a matching city name
+    
+    Parameters
+    ----------
+    possible_locations: List[String]
+        list of NER results
+    
+    Returns
+    -------
+    List
+        JSON style list of matching locations in the format below or []
+        [{
+            Search: entity extracted from query | NER entity or PLZ
+            City: city name or full address
+            Plz: zip code if available
+            latlon: latitude,longitude of found result 
+        }]
+            
+    """
+    matching_coordinates = []
+    for entity in possible_locations:
+        for index, row in df.iterrows():
+            if entity.lower() in row["City"].lower():
+                matching_coordinates.append({
+                    "Search": row["City"],
+                    "City":row["City"],
+                    "Plz": row["Plz"],
+                    "latlon": f"{row["Latitude"]},{row["Longitude"]}"
+                })
+    return matching_coordinates
+
+
+def load_coordinates_by_plz(possible_plz):
+    """search existing base of hospital locations for a matching zip code
+    
+    Parameters
+    ----------
+    possible_plz: List[String]
+        list of regex results
+    
+    Returns
+    -------
+    List
+        JSON style list of matching locations in the format below or []
+        [{
+            Search: entity extracted from query | NER entity or PLZ
+            City: city name or full address
+            Plz: zip code if available
+            latlon: latitude,longitude of found result 
+        }]
+            
+    """
+    matching_coordinates = []
+    for entity in possible_plz:
+        for index, row in df.iterrows():
+            if entity.lower() in row["Plz"].lower():
+                matching_coordinates.append({
+                    "Search": row["Plz"],
+                    "City":row["City"],
+                    "Plz": row["Plz"],
+                    "latlon": f"{row["Latitude"]},{row["Longitude"]}"
+                })   
+    return matching_coordinates
+
+def filter_five_digit_numbers(text_query):
+    """apply regex to filter for 5 digit numbers as possible zip codes
+    
+    Parameters
+    ----------
+    text_query: String
+    
+    Returns
+    -------
+    List[String]
+        List with all 5 digit numbers in the text query
+            
+    """
+    plzs = re.findall("\D[0-9]{5}\D", text_query) 
+    return [possible_plz[1:6] for possible_plz in plzs]
+
+def filter_one_per_city(locations, plzs):
+    """combine NER results with regex results and remove duplicate cities
+    
+    Parameters
+    ----------
+    locations: List[Dict]
+        coordinates for found locations
+    plzs: List[Dict]
+        coordinates for found zip codes
+    
+    Returns
+    -------
+    List
+        JSON style list of locations in the format below or []
+        [{
+            Search: entity extracted from query | NER entity or PLZ
+            City: city name or full address
+            Plz: zip code if available
+            latlon: latitude,longitude of found result 
+        }]
+            
+    """
+    result_set = {}
+    for location in locations:
+        result_set[location["City"]] = {
+            
+            "Search": location["Plz"],
+            "City": location["City"],
+            "Plz": location["Plz"],
+            "latlon": f"{location["Latitude"]},{location["Longitude"]}"   
+        }
+    for plz in plzs:
+        result_set[plz["City"]] = {
+            
+            "Search": plz["Plz"],
+            "City": plz["City"],
+            "Plz": plz["Plz"],
+            "latlon": f"{plz["Latitude"]},{plz["Longitude"]}"   
+        }
+    return list(result_set.values())
+
+def get_coordinates_from_entities(possible_location_entities, possible_plzs): 
+    """find coordinates for the provided entities.
+    
+    Parameters
+    ----------
+    possible_location_entities: List[String]
+        NER results
+    possible_plzs: List[String]
+        regex results
+    Returns
+    -------
+    List
+        JSON style list of locations in the format or []
+        [{
+            Search: entity extracted from query | NER entity or PLZ
+            City: city name or full address
+            Plz: zip code if available
+            latlon: latitude,longitude of found result 
+        }]
+            
+    """
+    existing_locations = load_coordinates_by_name(possible_location_entities)
+    existing_plzs = load_coordinates_by_plz(possible_plzs)
+
+    if not existing_plzs and not existing_locations:
+        return lookup_coordinates(possible_location_entities, possible_plzs)
+    
+    else:
+        return filter_one_per_city(existing_locations, existing_plzs)
+
+
+def process_text_for_location_query(text_query):
+    """apply NER for names and regex for possible zip codes.
+
+    Parameters
+    ----------
+    text_query: str
+        the text query to process
+
+    Returns
+    -------
+    Two Lists with NER and Regex results
+        
+    """
+    possible_plzs = filter_five_digit_numbers(text_query)
+
+    sentence = Sentence(text_query)
+    tagger.predict(sentence)
+    loc_enities = []
+    for entity in sentence.get_spans('ner'):
+        if entity.labels[0].value == "LOC":
+            loc_enities.append(entity.text)      
+
+    return loc_enities, possible_plzs
+
+def get_coordinates(text_query):
+    """Process text for location data and try to retrieve corresponding coordinates.
+
+    Parameters
+    ----------
+    text_query: str
+        the text query to process
+
+    Returns
+    -------
+    List
+        JSON style list of locations in the format or []
+        [{
+            Search: entity extracted from query | NER entity or PLZ
+            City: city name or full address
+            Plz: zip code if available
+            latlon: latitude,longitude of found result 
+        }]
+    """
+
+    loc_enities, possible_plzs = process_text_for_location_query(text_query)
+
+    return get_coordinates_from_entities(loc_enities, possible_plzs)
+
+
