@@ -164,7 +164,7 @@ def filter_one_per_city(locations, plzs):
     for location in locations:
         result_set[location["City"]] = {
             
-            "Search": location["Plz"],
+            "Search": location["City"],
             "City": location["City"],
             "Plz": location["Plz"],
             "latlon": location["latlon"]  
