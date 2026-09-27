@@ -160,13 +160,14 @@ def filter_one_per_city(locations, plzs):
             
     """
     result_set = {}
+
     for location in locations:
         result_set[location["City"]] = {
             
             "Search": location["Plz"],
             "City": location["City"],
             "Plz": location["Plz"],
-            "latlon": f"{location["Latitude"]},{location["Longitude"]}"   
+            "latlon": location["latlon"]  
         }
     for plz in plzs:
         result_set[plz["City"]] = {
@@ -174,7 +175,7 @@ def filter_one_per_city(locations, plzs):
             "Search": plz["Plz"],
             "City": plz["City"],
             "Plz": plz["Plz"],
-            "latlon": f"{plz["Latitude"]},{plz["Longitude"]}"   
+            "latlon": plz["latlon"]   
         }
     return list(result_set.values())
 
