@@ -53,9 +53,9 @@ def lookup_coordinates(possible_city_names, possible_plz):
         if place:
             result.append({
                 "Search": req,
-                "City": place.adress,
-                "Plz": None,
-                "latlon": f"{place.latitude}{place.longitude}"
+                "City": place.address,
+                "Plz": place.raw["name"] if place.raw["type"] == "postal_code" else None,
+                "latlon": f"{place.latitude},{place.longitude}"
             })
     return result
 
