@@ -10,6 +10,8 @@ requires-python = ">=3.12,<3.13"
 
 dependencies = [
     "de-klinikatlas",
+    "flair>=0.6.1.post1",
+    "geopy>=2.5.0",
     "httpx>=0.28.1",
     "ipywidgets>=8.1.9",
     "jupyter>=1.1.1",
@@ -21,6 +23,7 @@ dependencies = [
     "requests>=2.34.2",
     "safetensors>=0.8.0",
     "scikit-learn>=1.9.0",
+    "sentencepiece==0.2.1",
     "torch==2.11.0",
     "tqdm>=4.70.0",
     "transformers>=5.16.1",
