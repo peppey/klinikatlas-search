@@ -53,9 +53,20 @@ def _(keywords, semantic_search):
     similar_results = semantic_search.retrieve_similar_results(
         [keyword["text"] for keyword in keywords],
         top_k=10,
-        minimum_score=0.7,
+        minimum_score=0,
     )
     similar_results
+    return
+
+
+@app.cell
+def _(keywords, semantic_search):
+    umbrella_results = semantic_search.retrieve_icd_by_umbrella_terms(
+        [keyword["text"] for keyword in keywords],
+        top_k=3,
+        minimum_score=0.7,
+    )
+    umbrella_results
     return
 
 
@@ -87,6 +98,8 @@ def _(mo):
     mo.md(r"""
     ## Details
     ### Med
+
+    - Es ist noch nicht möglich, Codes einzugeben, nur Begriffe
 
     ### Location
     Current workflow logic:
