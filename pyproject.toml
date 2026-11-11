@@ -59,4 +59,5 @@ explicit = true
 [dependency-groups]
 dev = [
     "ipykernel>=7.3.0",
+    "pytest>=9.2.0",
 ]
