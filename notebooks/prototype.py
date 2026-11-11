@@ -8,8 +8,10 @@ app = marimo.App(width="medium")
 def _():
     import marimo as mo
     from klinikatlas_search import locations_ner as loc
+    from klinikatlas_search import medical_ner as med
+    from klinikatlas_search import semantic_search
 
-    return loc, mo
+    return loc, med, mo, semantic_search
 
 
 @app.cell(hide_code=True)
@@ -38,9 +40,18 @@ def _(mo):
 
 
 @app.cell
-def _(med_input):
-    med_output = med_input.value
-    med_output
+def _(med, med_input):
+    keywords = med.get_medical_keywords(med_input.value)
+    keywords
+    return (keywords,)
+
+
+@app.cell
+def _(keywords, semantic_search):
+    similar_results = semantic_search.retrieve_similar_results(
+        [keyword["text"] for keyword in keywords]
+    )
+    similar_results
     return
 
 
