@@ -12,6 +12,7 @@ from klinikatlas_search.medical_ner import get_device
 EMBEDDING_MODEL_NAME = "permediq/SapBERT-DE"
 MAX_LENGTH = 40
 BATCH_SIZE = 32
+MINIMUM_SCORE = 0.7
 SEED = 42
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -94,7 +95,11 @@ def _load_index() -> dict[str, tuple[list[str], torch.Tensor]]:
     return index
 
 
-def retrieve_similar_results(keywords: list[str], top_k: int = 10) -> dict[str, list[dict]]:
+def retrieve_similar_results(
+    keywords: list[str],
+    top_k: int = 10,
+    minimum_score: float = MINIMUM_SCORE,
+) -> dict[str, list[dict]]:
     """
     Find the most similar ICD and OPS descriptions for each keyword.
 
@@ -104,12 +109,14 @@ def retrieve_similar_results(keywords: list[str], top_k: int = 10) -> dict[str, 
         Keywords, e.g. from `medical_ner.get_medical_keywords`.
     top_k : int
         Number of results per keyword (ICD and OPS ranked together).
+    minimum_score : float
+        Minimum cosine similarity for a result to be returned.
 
     Returns
     -------
     dict
         {keyword: [{"description": str, "type": "icd" | "ops", "score": cosine similarity}, ...]}
-        sorted by descending score.
+        sorted by descending score; a keyword without results maps to [].
     """
     if not keywords:
         return {}
@@ -133,6 +140,7 @@ def retrieve_similar_results(keywords: list[str], top_k: int = 10) -> dict[str, 
                 "score": score,
             }
             for score, i in zip(row_scores.tolist(), row_indices.tolist())
+            if score >= minimum_score
         ]
         for keyword, row_scores, row_indices in zip(keywords, top_scores, top_indices)
     }

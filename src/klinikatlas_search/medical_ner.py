@@ -1,4 +1,5 @@
 from functools import lru_cache
+from string import punctuation
 
 import torch
 from transformers import AutoModelForTokenClassification, AutoTokenizer
@@ -190,7 +191,7 @@ def extract_medical_entities(
 
 def get_medical_keywords(
     text: str,
-    score_threshold: float = SCORE_THRESHOLD,
+    minimum_score: float = SCORE_THRESHOLD,
 ) -> list[dict]:
     """
     Extract medical keywords from a query.
@@ -199,14 +200,14 @@ def get_medical_keywords(
     ----------
     text : str
         German query, e.g. "Knie-OP wegen Kreuzbandriss".
-    score_threshold : float
+    minimum_score : float
         Minimum NER confidence for a keyword.
 
     Returns
     -------
     list of dict
         [{"text": keyword, "label": "PROBLEM" | "TEST" | "TREATMENT", "score": float}]
-        in order of appearance.
+        in order of appearance, without leading or trailing punctuation.
     """
     tokenizer, model, device = load_medical_ner()
 
@@ -215,11 +216,17 @@ def get_medical_keywords(
         tokenizer,
         model,
         device,
-        score_threshold,
+        minimum_score,
     )
 
-    return [
-        {"text": entity["text"], "label": entity["label"], "score": entity["score"]}
-        for entity in entities
-        if entity["label"] in KEYWORD_LABELS
-    ]
+    keywords = []
+
+    for entity in entities:
+        keyword = entity["text"].strip(punctuation + "„“”‚‘’…–—«»")
+
+        if entity["label"] in KEYWORD_LABELS and keyword:
+            keywords.append(
+                {"text": keyword, "label": entity["label"], "score": entity["score"]}
+            )
+
+    return keywords

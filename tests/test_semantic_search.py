@@ -69,7 +69,20 @@ def test_retrieve_similar_results_top_k_larger_than_index(tmp_data_dir, monkeypa
     _write_codes(tmp_data_dir, "ops", ["B"], [[0.0, 1.0]])
     monkeypatch.setattr(semantic_search, "embed", _fake_embed({"x": [1.0, 0.0]}))
 
-    assert len(semantic_search.retrieve_similar_results(["x"], top_k=10)["x"]) == 2
+    results = semantic_search.retrieve_similar_results(["x"], top_k=10, minimum_score=0.0)
+
+    assert len(results["x"]) == 2
+
+
+def test_retrieve_similar_results_filters_by_minimum_score(tmp_data_dir, monkeypatch):
+    _write_codes(tmp_data_dir, "icd", ["A"], [[1.0, 0.0]])
+    _write_codes(tmp_data_dir, "ops", ["B"], [[0.0, 1.0]])
+    monkeypatch.setattr(semantic_search, "embed", _fake_embed({"x": [1.0, 0.0], "y": [1.0, 1.0]}))
+
+    results = semantic_search.retrieve_similar_results(["x", "y"], minimum_score=0.9)
+
+    assert [r["description"] for r in results["x"]] == ["A"]
+    assert results["y"] == []
 
 
 def test_load_index_rejects_mismatching_embeddings(tmp_data_dir):

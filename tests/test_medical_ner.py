@@ -68,5 +68,19 @@ def test_get_medical_keywords_passes_threshold(monkeypatch):
     monkeypatch.setattr(medical_ner, "load_medical_ner", lambda: (None, None, None))
     monkeypatch.setattr(medical_ner, "extract_medical_entities", fake_extract)
 
-    assert medical_ner.get_medical_keywords("x", score_threshold=0.8) == []
+    assert medical_ner.get_medical_keywords("x", minimum_score=0.8) == []
     assert received["threshold"] == 0.8
+
+
+def test_get_medical_keywords_strips_punctuation(monkeypatch):
+    entities = [
+        {"text": "MRT,", "label": "TEST", "score": 0.8, "start": 0, "end": 4},
+        {"text": "(Knie-OP)", "label": "TREATMENT", "score": 0.9, "start": 5, "end": 14},
+        {"text": ".", "label": "PROBLEM", "score": 0.9, "start": 15, "end": 16},
+    ]
+    monkeypatch.setattr(medical_ner, "load_medical_ner", lambda: (None, None, None))
+    monkeypatch.setattr(medical_ner, "extract_medical_entities", lambda *args, **kwargs: entities)
+
+    keywords = medical_ner.get_medical_keywords("irrelevant")
+
+    assert [keyword["text"] for keyword in keywords] == ["MRT", "Knie-OP"]

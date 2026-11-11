@@ -19,6 +19,8 @@ def _(mo):
     mo.md(r"""
     ## Hier ein kleiner Protoype zum Ausprobieren
     [(und hier der Code dazu)](https://github.com/peppey/klinikatlas-search)
+
+    Bitte das Notebook erst einmal ausführen und dann in die Felder Suchbegriffe eingeben.
     """)
     return
 
@@ -41,7 +43,7 @@ def _(mo):
 
 @app.cell
 def _(med, med_input):
-    keywords = med.get_medical_keywords(med_input.value)
+    keywords = med.get_medical_keywords(med_input.value, minimum_score=0.5)
     keywords
     return (keywords,)
 
@@ -49,7 +51,9 @@ def _(med, med_input):
 @app.cell
 def _(keywords, semantic_search):
     similar_results = semantic_search.retrieve_similar_results(
-        [keyword["text"] for keyword in keywords]
+        [keyword["text"] for keyword in keywords],
+        top_k=10,
+        minimum_score=0.7,
     )
     similar_results
     return
