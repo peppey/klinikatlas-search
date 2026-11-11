@@ -7,7 +7,7 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import marimo as mo
-    import locations_ner as loc
+    from klinikatlas_search import locations_ner as loc
 
     return loc, mo
 

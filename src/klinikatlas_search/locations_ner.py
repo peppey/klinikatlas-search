@@ -1,4 +1,6 @@
 import re
+from pathlib import Path
+
 import pandas
 from flair.data import Sentence
 from flair.models import SequenceTagger
@@ -7,7 +9,7 @@ from geopy.geocoders import Nominatim
 
 tagger = SequenceTagger.load("flair/ner-german-large")
 
-df = pandas.read_csv("notebooks/hospital_locations.txt")
+df = pandas.read_csv(Path(__file__).parent / "data" / "hospital_locations.txt")
 
 def lookup_coordinates(possible_city_names, possible_plz):
     """search OpenStreetMap data for recognized entities.
