@@ -119,7 +119,7 @@ def max_nolog(embedded_database: torch.Tensor, embedded_input: torch.Tensor)-> i
     index= sums.argmax().item()
     return(index)
 
-def n_max_log(embedded_database: torch.Tensor, embedded_input: torch.Tensor,amount :int)-> list[int]:
+def n_max_log(embedded_database: torch.Tensor, embedded_input: torch.Tensor,amount :int)-> (list[int],list[int]):
     '''
     From the matrix given by cos_sim take the max of the logs summed of the ones corresponding to the same database embeddin. 
 
@@ -129,13 +129,16 @@ def n_max_log(embedded_database: torch.Tensor, embedded_input: torch.Tensor,amou
     amount: the amount of indexes for the reranker
 
     Return: 
-    a list of indexes 
+    a list of indexes and respective scores
     '''
     similarity_tensor = cos_sim(embedded_database, embedded_input)
     log = torch.log(similarity_tensor).sum(dim=1)
     log = log.nan_to_num(nan = float('-inf'))
-    indices = torch.topk(log, k=amount).indices.tolist()
-    return(indices)
+    
+    top_results = torch.topk(log, k=amount)
+    indices = top_results.indices.tolist()
+    score = similarity_tensor[indices].tolist()
+    return(indices, score)
 
 def reranker_after(data: list[klinikatlas_datatype]|list[dict],
              indices:list[int], 

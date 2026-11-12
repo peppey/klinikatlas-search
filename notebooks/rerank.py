@@ -140,11 +140,11 @@ def _(mo):
 @app.cell
 def _(all_embs, icd_data, importlib, rrf, this_embed_3):
     importlib.reload(rrf)
-    _k = rrf.n_max_log(all_embs, this_embed_3,10)
-    print(_k)
+    _k, score= rrf.n_max_log(all_embs, this_embed_3,10)
+    print(_k[0])
     for i in range(0,10):
-        print(icd_data[_k[i]])
-    
+        print(icd_data[_k[i]]['description'] , '           Score:', score[i])
+
     return
 
 
@@ -160,13 +160,12 @@ def _(FlagReranker):
 @app.cell
 def _(all_embs, bs, icd_data, importlib, reranker, rrf, this_embed_3, x):
     importlib.reload(rrf)
-    _k = rrf.n_max_log(all_embs, this_embed_3,200)
+    _k, scores = rrf.n_max_log(all_embs, this_embed_3,200)
     reranked_result = rrf.reranker_after(icd_data, _k, x, reranker, bs)
     print(reranked_result[0][0])
 
     for j in range(0,10):
         print('Icd:', reranked_result[j][0], '      Score:', reranked_result[j][1])
-
     return
 
 
