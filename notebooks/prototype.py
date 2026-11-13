@@ -48,14 +48,20 @@ def _(med, med_input):
 
 
 @app.cell
+def _(icd_umbrella_results):
+    icd_umbrella_results
+    return
+
+
+@app.cell
 def _(keywords, semantic_search):
     icd_umbrella_results = semantic_search.retrieve_icd_by_umbrella_terms(
         [keyword["text"] for keyword in keywords],
         top_k=3,
-        minimum_score=0.75,
+        minimum_score=0.7,
     )
     icd_umbrella_results
-    return
+    return (icd_umbrella_results,)
 
 
 @app.cell
@@ -63,7 +69,7 @@ def _(keywords, semantic_search):
     ops_umbrella_results = semantic_search.retrieve_ops_by_umbrella_terms(
         [keyword["text"] for keyword in keywords],
         top_k=3,
-        minimum_score=0.75,
+        minimum_score=0.7,
     )
     ops_umbrella_results
     return
@@ -100,7 +106,7 @@ def _(mo):
 
     1. Ein Modell extrahiert medizinische Keywords aus der Suchanfrage
     2. Die Keywords werden semantisch mit "Umbrella Terms" gematcht, die jeweils für eine Reihe ICD- oder OPS-Codes stehen
-    3. Momentan werden alle Umbrella-Terms und zugehörige Codes zurückgegeben, die einen Score von mindestens 75% haben (was anpassbar ist)
+    3. Momentan werden alle Umbrella-Terms und zugehörige Codes zurückgegeben, die einen Score von mindestens 70% haben (was anpassbar ist)
 
     ### Location
     Aktueller Ablauf:
@@ -117,6 +123,7 @@ def _(mo):
 
     ## Einschränkungen
 
+    - Momentan kann nur mit Begriffen, die aus einem Wort bestehen, umgegangen werden, nicht beispielsweise mit "Fraktur Sprunggelenk"
     - Es ist noch nicht möglich, OPS- oder ICD-Codes als Zahlencode einzugeben, nur Beschreibungen von den Codes
     - Die Umbrella Terms wurden von einem LLM geschrieben und müssen nachbearbeitet werden. Momentan gibt es für weniger als die Hälfte der Codes einen Umbrella Terms; Es muss auch bestimmt werden, wie mit den mehreren Codes umgegeben werden soll, die für einen Umbrella-Term zurückgegeben werden sollen. Sie könnten auch noch sortiert werden
     - Die Modelle können noch finegetuned und quantitativ evaluiert werden
