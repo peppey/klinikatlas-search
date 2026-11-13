@@ -8,4 +8,4 @@ This project is set up with uv and uses Marimo Notebooks. To start them, use
 
 ## Vision
 
-![Vision](docs/vision.jpeg)
+![Vision](assets/vision.jpeg)
