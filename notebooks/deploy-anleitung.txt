@@ -1,15 +1,15 @@
 MANUAL STEP BY STEP for changes:
 1. save changes to the notebook
-2. empty deploy-docs directory (maybe it would write over existing but better safe than sorry)
-3. run command "marimo export html-wasm notbooks/prototype.py -o deploy-docs" to export the deployable notebook code into deploy code directory
-4. git add deploy-docs + commit + push
+2. empty docs directory (maybe it would write over existing but better safe than sorry)
+3. run command "marimo export html-wasm notebooks/prototype.py -o docs" to export the deployable notebook code into deploy code directory
+4. git add docs + commit + push
 5. might take a minute for github to build deployed website
 
 MANUAL STEP BY STEP for initial setup:
 1. ON GITHUB WEBPAGE
-2. Settings -> Pages
+2. Settings of the repository -> Pages
 3. Deploy from Branch
-4. set branch *Branch* + folder 'deploy-docs' | i suggest using the prototype branch for all of this 
+4. set branch *Branch* + folder 'docs' | i suggest using the prototype branch for all of this 
 5. Save 
 6. Back in repository / code part of website. click cog(Zahnrad) to edit repository details and check use Github Pages website
 7. If this is setup once then any new push to *Branch* should automatically rebuild the Pages site
