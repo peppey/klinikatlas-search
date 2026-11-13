@@ -1,7 +1,7 @@
 MANUAL STEP BY STEP for changes:
 1. save changes to the notebook
 2. empty deploy-docs directory (maybe it would write over existing but better safe than sorry)
-3. run command "marimo export html-wasm prototype.py -o deploy-docs" to export the deployable notebook code into deploy code directory
+3. run command "marimo export html-wasm notbooks/prototype.py -o deploy-docs" to export the deployable notebook code into deploy code directory
 4. git add deploy-docs + commit + push
 5. might take a minute for github to build deployed website
 
