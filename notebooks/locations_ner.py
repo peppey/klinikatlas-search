@@ -7,7 +7,7 @@ from geopy.geocoders import Nominatim
 
 tagger = SequenceTagger.load("flair/ner-german-large")
 
-df = pandas.read_csv("hospital_locations.txt")
+df = pandas.read_csv("notebooks/hospital_locations.txt")
 
 def lookup_coordinates(possible_city_names, possible_plz):
     """search OpenStreetMap data for recognized entities.
@@ -157,7 +157,7 @@ def filter_one_per_city(locations, plzs):
     List
         JSON style list of locations in the format below or []
         [{
-            Search: entity extracted from query | NER entity or PLZ
+            Search: entity extracted from query i.e. NER entity or PLZ
             City: city name or full address
             Plz: zip code if available
             latlon: latitude,longitude of found result 
