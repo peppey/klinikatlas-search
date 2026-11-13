@@ -20,7 +20,7 @@ def _(mo):
     ## Hier ein kleiner Protoype zum Ausprobieren
     [(und hier der Code dazu)](https://github.com/peppey/klinikatlas-search)
 
-    Bitte das Notebook erst einmal ausführen und dann in die Felder Suchbegriffe eingeben.
+    Bitte das Notebook erst einmal ausführen und dann in die Felder anstatt "Suchanfrage - Med" und "Suchanfrage - ORT" Suchbegriffe eingeben.
     """)
     return
 
@@ -44,18 +44,17 @@ def _(mo):
 @app.cell
 def _(med, med_input):
     keywords = med.get_medical_keywords(med_input.value, minimum_score=0.5)
-    keywords
     return (keywords,)
 
 
 @app.cell
 def _(keywords, semantic_search):
-    umbrella_results = semantic_search.retrieve_icd_by_umbrella_terms(
+    icd_umbrella_results = semantic_search.retrieve_icd_by_umbrella_terms(
         [keyword["text"] for keyword in keywords],
         top_k=3,
         minimum_score=0.75,
     )
-    umbrella_results
+    icd_umbrella_results
     return
 
 
@@ -99,29 +98,31 @@ def _(mo):
     ## Details
     ### Med
 
-    - Es ist noch nicht möglich, Codes einzugeben, nur Begriffe
+    1. Ein Modell extrahiert medizinische Keywords aus der Suchanfrage
+    2. Die Keywords werden semantisch mit "Umbrella Terms" gematcht, die jeweils für eine Reihe ICD- oder OPS-Codes stehen
+    3. Momentan werden alle Umbrella-Terms und zugehörige Codes zurückgegeben, die einen Score von mindestens 75% haben (was anpassbar ist)
 
     ### Location
-    Current workflow logic:
+    Aktueller Ablauf:
 
-    1. get text query
-    2. identify named location entities and zip codes(5 digit numbers not at start of string)
-    3. compare named entities and zip codes to csv file of existing hospitals
-    4. return coordinates for all matched entities/zip codes found in existing csv
-    5. if none are found, search OSM data for coordinates of the unmatched entities/zip codes
-    6. return results of the OSM data search
-    7. if none are found return empty list
-    """)
-    return
+    1. Suchanfrage entgegennehmen
+    2. Benannte Orte und Postleitzahlen erkennen (fünfstellige Zahlen, die nicht am Textanfang stehen)
+    3. Erkannte Orte und Postleitzahlen mit der CSV-Datei der bekannten Krankenhäuser abgleichen
+    4. Koordinaten aller Orte/Postleitzahlen zurückgeben, die in der CSV gefunden wurden
+    5. Wenn keine gefunden wurden, in den OSM-Daten nach Koordinaten der nicht zugeordneten Orte/Postleitzahlen suchen
+    Ergebnisse der OSM-Suche zurückgeben
+    6. Wenn auch dort nichts gefunden wird, eine leere Liste zurückgeben
 
 
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    ## Open Questions
-    1. Result Ordering: Order by Nearest, Order by Most Specializied, Hybrid (i.e. order nearest 10 by specialty or most specialized 10 by distance)?
-    2. OSM Search: if no existing hospital at location, do Open Street Map search or not?
-    3. Multiple Locations: Return most likely match for location or return multiple?
+
+    ## Einschränkungen
+
+    - Es ist noch nicht möglich, OPS- oder ICD-Codes als Zahlencode einzugeben, nur Beschreibungen von den Codes
+    - Die Umbrella Terms wurden von einem LLM geschrieben und müssen nachbearbeitet werden. Momentan gibt es für weniger als die Hälfte der Codes einen Umbrella Terms; Es muss auch bestimmt werden, wie mit den mehreren Codes umgegeben werden soll, die für einen Umbrella-Term zurückgegeben werden sollen. Sie könnten auch noch sortiert werden
+    - Die Modelle können noch finegetuned und quantitativ evaluiert werden
+    - Es gibt noch keine Ähnlichkeitssuche nach Krankenhausspezialisierungen
+    - Wir haben die Suche nach OPS und ICD Codes im Moment getrennt, natürlich würde sie später zusammengeführt werden
+    - Orte mit Rechtschreibfehlern werden noch nicht erkannt; Außerdem hätten wir noch Fragen dazu, wie die Suche nach Orten aussehen sollte
     """)
     return
 
