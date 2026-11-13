@@ -18,8 +18,6 @@ def clear_index_cache():
 @pytest.fixture
 def tmp_data_dir(tmp_path, monkeypatch):
     monkeypatch.setattr(semantic_search, "DATA_DIR", tmp_path)
-    monkeypatch.setattr(semantic_search, "UMBRELLA_TERMS_PATH", tmp_path / "icd_umbrella_terms.json")
-    monkeypatch.setattr(semantic_search, "UMBRELLA_EMBEDDINGS_PATH", tmp_path / "icd_umbrella_embeddings.pt")
     return tmp_path
 
 
@@ -28,15 +26,15 @@ def _write_codes(data_dir, code_type, descriptions, embeddings):
     torch.save(torch.tensor(embeddings).half(), data_dir / f"{code_type}_embeddings.pt")
 
 
-def _write_icd_with_codes(data_dir, items):
-    (data_dir / "icd_codes.json").write_text(
-        json.dumps([{"icdcode": code, "description": description} for code, description in items]),
+def _write_entries(data_dir, code_type, items):
+    (data_dir / f"{code_type}_codes.json").write_text(
+        json.dumps([{f"{code_type}code": code, "description": description} for code, description in items]),
         encoding="utf-8",
     )
 
 
-def _write_umbrella_groups(data_dir, groups):
-    (data_dir / "icd_umbrella_terms.json").write_text(json.dumps(groups), encoding="utf-8")
+def _write_umbrella_groups(data_dir, code_type, groups):
+    (data_dir / f"{code_type}_umbrella_terms.json").write_text(json.dumps(groups), encoding="utf-8")
 
 
 def _fake_embed(vectors):
@@ -55,78 +53,121 @@ def _fake_embed(vectors):
         ("J11.8", "J09-J11", True),
         ("J12", "J09-J11", False),
         ("I80.1", "I80-I82", True),
+        ("5-812.5", "5-812", True),
+        ("5-812", "5-81", True),
+        ("5-813", "5-812", False),
+        ("5-812.5", "5-812.6", False),
     ],
 )
 def test_code_matches(code, pattern, expected):
     assert semantic_search._code_matches(code, pattern) is expected
 
 
-def test_retrieve_icd_by_umbrella_terms_empty_keywords():
-    assert semantic_search.retrieve_icd_by_umbrella_terms([]) == {}
-
-
-def test_retrieve_icd_by_umbrella_terms_returns_all_codes_below_umbrella(tmp_data_dir, monkeypatch):
-    _write_icd_with_codes(
-        tmp_data_dir,
-        [
+UMBRELLA_CASES = {
+    "icd": {
+        "items": [
             ("J09", "Grippe durch zoonotische Viren"),
             ("J10.1", "Grippe mit Manifestationen"),
             ("J11", "Grippe, Viren nicht nachgewiesen"),
             ("J12", "Viruspneumonie"),
             ("I21", "Akuter Myokardinfarkt"),
         ],
-    )
-    _write_umbrella_groups(
-        tmp_data_dir,
-        [
+        "groups": [
             {"terms": ["Grippe", "Influenza"], "icd": ["J09-J11"]},
             {"terms": ["Herzinfarkt"], "icd": ["I21"]},
         ],
+        "expected": ["J09", "J10.1", "J11"],
+    },
+    "ops": {
+        "items": [
+            ("5-812", "Arthroskopische Operation am Gelenkknorpel"),
+            ("5-812.5", "Arthroskopische Meniskusresektion"),
+            ("5-813", "Arthroskopische Refixation am Kapselbandapparat"),
+            ("5-820", "Implantation einer Endoprothese am Hüftgelenk"),
+        ],
+        "groups": [
+            {"terms": ["Meniskus-OP", "Meniskusoperation"], "ops": ["5-812"]},
+            {"terms": ["Hüftprothese"], "ops": ["5-820"]},
+        ],
+        "expected": ["5-812", "5-812.5"],
+    },
+}
+
+
+@pytest.mark.parametrize("code_type", ["icd", "ops"])
+def test_retrieve_by_umbrella_terms_returns_all_codes_below_umbrella(code_type, tmp_data_dir, monkeypatch):
+    case = UMBRELLA_CASES[code_type]
+    first_group, second_group = case["groups"]
+    _write_entries(tmp_data_dir, code_type, case["items"])
+    _write_umbrella_groups(tmp_data_dir, code_type, case["groups"])
+    best, close = first_group["terms"][1], first_group["terms"][0]
+    monkeypatch.setattr(
+        semantic_search,
+        "embed",
+        _fake_embed({best: [1.0, 0.0], close: [0.9, 0.1], second_group["terms"][0]: [0.0, 1.0]}),
     )
+
+    results = semantic_search.retrieve_by_umbrella_terms([best], code_type, minimum_score=0.7)
+
+    assert len(results[best]) == 1
+    match = results[best][0]
+    assert match["umbrella_term"] == best
+    assert match["score"] == pytest.approx(1.0, abs=1e-3)
+    assert [entry["code"] for entry in match[f"{code_type}_codes"]] == case["expected"]
+    assert all(set(entry) == {"code", "description"} for entry in match[f"{code_type}_codes"])
+
+
+def test_icd_and_ops_wrappers_use_their_own_umbrella_files(tmp_data_dir, monkeypatch):
+    for code_type in ("icd", "ops"):
+        case = UMBRELLA_CASES[code_type]
+        _write_entries(tmp_data_dir, code_type, case["items"])
+        _write_umbrella_groups(tmp_data_dir, code_type, case["groups"])
     monkeypatch.setattr(
         semantic_search,
         "embed",
         _fake_embed(
             {
-                "Grippe": [0.9, 0.1],
                 "Influenza": [1.0, 0.0],
+                "Grippe": [0.9, 0.1],
                 "Herzinfarkt": [0.0, 1.0],
+                "Meniskus-OP": [1.0, 0.0],
+                "Meniskusoperation": [0.9, 0.1],
+                "Hüftprothese": [0.0, 1.0],
             }
         ),
     )
 
-    results = semantic_search.retrieve_icd_by_umbrella_terms(["Influenza"], minimum_score=0.7)
+    icd = semantic_search.retrieve_icd_by_umbrella_terms(["Influenza"])
+    ops = semantic_search.retrieve_ops_by_umbrella_terms(["Meniskus-OP"])
 
-    assert len(results["Influenza"]) == 1
-    match = results["Influenza"][0]
-    assert match["umbrella_term"] == "Influenza"
-    assert match["score"] == pytest.approx(1.0, abs=1e-3)
-    assert match["icd_codes"] == [
-        {"code": "J09", "description": "Grippe durch zoonotische Viren"},
-        {"code": "J10.1", "description": "Grippe mit Manifestationen"},
-        {"code": "J11", "description": "Grippe, Viren nicht nachgewiesen"},
-    ]
+    assert "icd_codes" in icd["Influenza"][0]
+    assert "ops_codes" in ops["Meniskus-OP"][0]
 
 
-def test_retrieve_icd_by_umbrella_terms_filters_by_minimum_score(tmp_data_dir, monkeypatch):
-    _write_icd_with_codes(tmp_data_dir, [("I21", "Akuter Myokardinfarkt")])
-    _write_umbrella_groups(tmp_data_dir, [{"terms": ["Herzinfarkt"], "icd": ["I21"]}])
+def test_retrieve_by_umbrella_terms_empty_keywords():
+    assert semantic_search.retrieve_by_umbrella_terms([], "ops") == {}
+
+
+def test_retrieve_by_umbrella_terms_filters_by_minimum_score(tmp_data_dir, monkeypatch):
+    _write_entries(tmp_data_dir, "icd", [("I21", "Akuter Myokardinfarkt")])
+    _write_umbrella_groups(tmp_data_dir, "icd", [{"terms": ["Herzinfarkt"], "icd": ["I21"]}])
     monkeypatch.setattr(
         semantic_search,
         "embed",
         _fake_embed({"Herzinfarkt": [0.0, 1.0], "Wäsche": [1.0, 0.0]}),
     )
 
-    results = semantic_search.retrieve_icd_by_umbrella_terms(["Herzinfarkt", "Wäsche"], minimum_score=0.7)
+    results = semantic_search.retrieve_by_umbrella_terms(["Herzinfarkt", "Wäsche"], "icd", minimum_score=0.7)
 
     assert len(results["Herzinfarkt"]) == 1
     assert results["Wäsche"] == []
 
 
-def test_retrieve_icd_by_umbrella_terms_term_in_several_groups_and_top_k(tmp_data_dir, monkeypatch):
-    _write_icd_with_codes(tmp_data_dir, [("K40", "Leistenbruch"), ("S72", "Fraktur des Femurs")])
+def test_retrieve_by_umbrella_terms_term_in_several_groups_and_top_k(tmp_data_dir, monkeypatch):
+    _write_entries(tmp_data_dir, "icd", [("K40", "Leistenbruch"), ("S72", "Fraktur des Femurs")])
     _write_umbrella_groups(
         tmp_data_dir,
+        "icd",
         [
             {"terms": ["Bruch"], "icd": ["S72"]},
             {"terms": ["Bruch"], "icd": ["K40"]},
@@ -134,56 +175,50 @@ def test_retrieve_icd_by_umbrella_terms_term_in_several_groups_and_top_k(tmp_dat
     )
     monkeypatch.setattr(semantic_search, "embed", _fake_embed({"Bruch": [1.0, 0.0]}))
 
-    both = semantic_search.retrieve_icd_by_umbrella_terms(["Bruch"], top_k=3)
-    one = semantic_search.retrieve_icd_by_umbrella_terms(["Bruch"], top_k=1)
+    both = semantic_search.retrieve_by_umbrella_terms(["Bruch"], "icd", top_k=3)
+    one = semantic_search.retrieve_by_umbrella_terms(["Bruch"], "icd", top_k=1)
 
     assert [[c["code"] for c in m["icd_codes"]] for m in both["Bruch"]] == [["S72"], ["K40"]]
     assert len(one["Bruch"]) == 1
 
 
-def test_umbrella_embeddings_are_rebuilt_when_terms_change(tmp_data_dir, monkeypatch):
-    _write_icd_with_codes(tmp_data_dir, [("I21", "Akuter Myokardinfarkt")])
-    _write_umbrella_groups(tmp_data_dir, [{"terms": ["Herzinfarkt"], "icd": ["I21"]}])
-    torch.save(
-        {"terms": ["Alt"], "embeddings": torch.tensor([[1.0, 0.0]]).half()},
-        tmp_data_dir / "icd_umbrella_embeddings.pt",
-    )
-    monkeypatch.setattr(semantic_search, "embed", _fake_embed({"Herzinfarkt": [0.0, 1.0]}))
+@pytest.mark.parametrize("code_type", ["icd", "ops"])
+def test_umbrella_embeddings_are_rebuilt_when_terms_change(code_type, tmp_data_dir, monkeypatch):
+    _write_entries(tmp_data_dir, code_type, [("X1", "Beschreibung")])
+    _write_umbrella_groups(tmp_data_dir, code_type, [{"terms": ["Neu"], code_type: ["X1"]}])
+    stored_path = tmp_data_dir / f"{code_type}_umbrella_embeddings.pt"
+    torch.save({"terms": ["Alt"], "embeddings": torch.tensor([[1.0, 0.0]]).half()}, stored_path)
+    monkeypatch.setattr(semantic_search, "embed", _fake_embed({"Neu": [0.0, 1.0]}))
 
-    index = semantic_search._load_umbrella_index()
+    index = semantic_search._load_umbrella_index(code_type)
 
-    assert index["terms"] == ["Herzinfarkt"]
-    stored = torch.load(tmp_data_dir / "icd_umbrella_embeddings.pt", weights_only=True)
-    assert stored["terms"] == ["Herzinfarkt"]
+    assert index["terms"] == ["Neu"]
+    assert torch.load(stored_path, weights_only=True)["terms"] == ["Neu"]
 
 
-def test_retrieve_similar_results_includes_icd_code_and_none_for_ops(tmp_data_dir, monkeypatch):
-    _write_icd_with_codes(tmp_data_dir, [("I21", "Akuter Myokardinfarkt")])
+def test_retrieve_similar_results_includes_codes_for_icd_and_ops(tmp_data_dir, monkeypatch):
+    _write_entries(tmp_data_dir, "icd", [("I21", "Akuter Myokardinfarkt")])
+    _write_entries(tmp_data_dir, "ops", [("5-812", "Arthroskopische Operation")])
     torch.save(torch.tensor([[1.0, 0.0]]).half(), tmp_data_dir / "icd_embeddings.pt")
-    _write_codes(tmp_data_dir, "ops", ["MRT Schädel"], [[0.9, 0.1]])
+    torch.save(torch.tensor([[0.9, 0.1]]).half(), tmp_data_dir / "ops_embeddings.pt")
     monkeypatch.setattr(semantic_search, "embed", _fake_embed({"x": [1.0, 0.0]}))
 
     results = semantic_search.retrieve_similar_results(["x"])
 
-    assert [(r["type"], r["code"]) for r in results["x"]] == [("icd", "I21"), ("ops", None)]
+    assert [(r["type"], r["code"]) for r in results["x"]] == [("icd", "I21"), ("ops", "5-812")]
 
 
-def test_shipped_umbrella_groups_all_match_icd_codes():
-    entries = semantic_search._load_entries("icd")
+@pytest.mark.parametrize("code_type", ["icd", "ops"])
+def test_shipped_umbrella_groups_all_match_codes(code_type):
+    codes = [entry["code"] for entry in semantic_search._load_entries(code_type)]
 
     empty = [
         group["terms"][0]
-        for group in semantic_search._load_umbrella_groups()
-        if not any(
-            _code_in_group(entry["code"], group["icd"]) for entry in entries
-        )
+        for group in semantic_search._load_umbrella_groups(code_type)
+        if not any(semantic_search._matcher(group[code_type])(code) for code in codes)
     ]
 
     assert empty == []
-
-
-def _code_in_group(code, patterns):
-    return any(semantic_search._code_matches(code, pattern) for pattern in patterns)
 
 
 def test_retrieve_similar_results_empty_keywords():
@@ -254,7 +289,7 @@ def test_load_index_rejects_mismatching_embeddings(tmp_data_dir):
 def test_load_index_builds_missing_embeddings(tmp_data_dir, monkeypatch):
     for code_type in semantic_search.CODE_TYPES:
         (tmp_data_dir / f"{code_type}_codes.json").write_text(json.dumps(["A", "B"]), encoding="utf-8")
-    _write_umbrella_groups(tmp_data_dir, [{"terms": ["A"], "icd": ["Z"]}])
+        _write_umbrella_groups(tmp_data_dir, code_type, [{"terms": ["A"], code_type: ["Z"]}])
     monkeypatch.setattr(semantic_search, "embed", lambda texts, *args, **kwargs: torch.eye(len(texts)))
 
     index = semantic_search._load_index()
@@ -262,7 +297,7 @@ def test_load_index_builds_missing_embeddings(tmp_data_dir, monkeypatch):
     for code_type in semantic_search.CODE_TYPES:
         assert index[code_type][0] == [{"code": None, "description": "A"}, {"code": None, "description": "B"}]
         assert (tmp_data_dir / f"{code_type}_embeddings.pt").exists()
-    assert (tmp_data_dir / "icd_umbrella_embeddings.pt").exists()
+        assert (tmp_data_dir / f"{code_type}_umbrella_embeddings.pt").exists()
 
 
 @pytest.mark.parametrize("code_type", semantic_search.CODE_TYPES)
@@ -277,3 +312,12 @@ def test_shipped_embeddings_match_descriptions(code_type):
 
     assert embeddings.shape[0] == len(descriptions)
     assert torch.isfinite(embeddings.float()).all()
+
+
+@pytest.mark.parametrize("code_type", semantic_search.CODE_TYPES)
+def test_shipped_umbrella_embeddings_match_terms(code_type):
+    stored = torch.load(semantic_search._umbrella_embeddings_path(code_type), weights_only=True)
+    terms = semantic_search._umbrella_terms(semantic_search._load_umbrella_groups(code_type))
+
+    assert stored["terms"] == terms
+    assert stored["embeddings"].shape[0] == len(terms)

@@ -50,23 +50,23 @@ def _(med, med_input):
 
 @app.cell
 def _(keywords, semantic_search):
-    similar_results = semantic_search.retrieve_similar_results(
+    umbrella_results = semantic_search.retrieve_icd_by_umbrella_terms(
         [keyword["text"] for keyword in keywords],
-        top_k=10,
-        minimum_score=0,
+        top_k=3,
+        minimum_score=0.75,
     )
-    similar_results
+    umbrella_results
     return
 
 
 @app.cell
 def _(keywords, semantic_search):
-    umbrella_results = semantic_search.retrieve_icd_by_umbrella_terms(
+    ops_umbrella_results = semantic_search.retrieve_ops_by_umbrella_terms(
         [keyword["text"] for keyword in keywords],
         top_k=3,
-        minimum_score=0.7,
+        minimum_score=0.75,
     )
-    umbrella_results
+    ops_umbrella_results
     return
 
 
