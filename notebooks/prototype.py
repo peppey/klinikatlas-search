@@ -4,14 +4,15 @@ __generated_with = "0.24.0"
 app = marimo.App(width="medium")
 
 
-@app.cell
-def _():
+app._unparsable_cell(
+    r"""
     import marimo as mo
-    from klinikatlas_search import locations_ner as loc
-    from klinikatlas_search import medical_ner as med
-    from klinikatlas_search import semantic_search
-
-    return loc, med, mo, semantic_search
+    from klinikatlas_search import ./notebooks/locations_ner as loc
+    from klinikatlas_search import ./notebooks/medical_ner as med
+    from klinikatlas_search import ./notebooks/semantic_search
+    """,
+    name="_"
+)
 
 
 @app.cell(hide_code=True)
