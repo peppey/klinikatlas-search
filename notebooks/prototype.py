@@ -7,9 +7,9 @@ app = marimo.App(width="medium")
 app._unparsable_cell(
     r"""
     import marimo as mo
-    from klinikatlas_search import ./notebooks/locations_ner as loc
-    from klinikatlas_search import ./notebooks/medical_ner as med
-    from klinikatlas_search import ./notebooks/semantic_search
+    from klinikatlas_search import locations_ner as loc
+    from klinikatlas_search import medical_ner as med
+    from klinikatlas_search import semantic_search
     """,
     name="_"
 )
