@@ -67,7 +67,7 @@ def _(keywords, semantic_search):
     icd_umbrella_results = semantic_search.retrieve_icd_by_umbrella_terms(
         [keyword["text"] for keyword in keywords],
         top_k=3,
-        minimum_score=0.7,
+        minimum_score=0.55,
     )
     icd_umbrella_results
     return
@@ -86,7 +86,7 @@ def _(keywords, semantic_search):
     ops_umbrella_results = semantic_search.retrieve_ops_by_umbrella_terms(
         [keyword["text"] for keyword in keywords],
         top_k=3,
-        minimum_score=0.7,
+        minimum_score=0.55,
     )
     ops_umbrella_results
     return
@@ -123,7 +123,7 @@ def _(mo):
 
     1. Ein Modell extrahiert medizinische Keywords aus der Suchanfrage
     2. Die Keywords werden semantisch mit "Umbrella Terms" gematcht, die jeweils für eine Reihe ICD- oder OPS-Codes stehen
-    3. Momentan werden alle Umbrella-Terms und zugehörige Codes zurückgegeben, die einen Score von mindestens 70% haben (was anpassbar ist)
+    3. Momentan werden alle Umbrella-Terms und zugehörige Codes zurückgegeben, die einen Score von mindestens 55% haben (was anpassbar ist)
 
     ### Location
     Aktueller Ablauf:
