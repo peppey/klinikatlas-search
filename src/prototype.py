@@ -4,6 +4,7 @@
 #     "marimo>=0.25.2",
 # ]
 # ///
+
 import marimo
 
 __generated_with = "0.24.0"
@@ -24,7 +25,7 @@ def _():
 def _(mo):
     mo.md(r"""
     ## Hier ein kleiner Protoype zum Ausprobieren
-    [(und hier der Code dazu)](https://github.com/peppey/klinikatlas-search)
+    [(und hier der Code dazu)](https://github.com/peppey/klinikatlas-search/tree/prototyping)
 
     Bitte das Notebook erst einmal ausführen und dann in die Felder anstatt "Suchanfrage - Med" und "Suchanfrage - ORT" Suchbegriffe eingeben.
     """)
@@ -53,9 +54,11 @@ def _(med, med_input):
     return (keywords,)
 
 
-@app.cell
-def _(icd_umbrella_results):
-    icd_umbrella_results
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ICD Codes
+    """)
     return
 
 
@@ -67,7 +70,15 @@ def _(keywords, semantic_search):
         minimum_score=0.7,
     )
     icd_umbrella_results
-    return (icd_umbrella_results,)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    OPS Codes
+    """)
+    return
 
 
 @app.cell
