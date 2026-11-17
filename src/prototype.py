@@ -57,7 +57,7 @@ def _(med, med_input):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ICD Codes
+    ICD Codes (mit Ähnlichkeitsscores)
     """)
     return
 
@@ -76,7 +76,7 @@ def _(keywords, semantic_search):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    OPS Codes
+    OPS Codes (mit Ähnlichkeitsscores)
     """)
     return
 
@@ -140,9 +140,8 @@ def _(mo):
 
     ## Einschränkungen
 
-    - Momentan kann nur mit Begriffen, die aus einem Wort bestehen, umgegangen werden, nicht beispielsweise mit "Fraktur Sprunggelenk"
     - Es ist noch nicht möglich, OPS- oder ICD-Codes als Zahlencode einzugeben, nur Beschreibungen von den Codes
-    - Die Umbrella Terms wurden von einem LLM geschrieben und müssen nachbearbeitet werden. Momentan gibt es für weniger als die Hälfte der Codes einen Umbrella Terms; Es muss auch bestimmt werden, wie mit den mehreren Codes umgegeben werden soll, die für einen Umbrella-Term zurückgegeben werden sollen. Sie könnten auch noch sortiert werden
+    - Die Umbrella Terms wurden von einem LLM geschrieben und müssen nachbearbeitet werden. Es muss auch bestimmt werden, wie mit den mehreren Codes umgegeben werden soll, die für einen Umbrella-Term zurückgegeben werden sollen. Sie sollten noch sortiert werden
     - Die Modelle können noch finegetuned und quantitativ evaluiert werden
     - Es gibt noch keine Ähnlichkeitssuche nach Krankenhausspezialisierungen
     - Wir haben die Suche nach OPS und ICD Codes im Moment getrennt, natürlich würde sie später zusammengeführt werden
