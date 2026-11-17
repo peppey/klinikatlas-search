@@ -321,3 +321,13 @@ def test_shipped_umbrella_embeddings_match_terms(code_type):
 
     assert stored["terms"] == terms
     assert stored["embeddings"].shape[0] == len(terms)
+
+
+@pytest.mark.parametrize("code_type", semantic_search.CODE_TYPES)
+def test_shipped_umbrella_groups_cover_every_code(code_type):
+    matchers = [semantic_search._matcher(group[code_type]) for group in semantic_search._load_umbrella_groups(code_type)]
+    codes = [entry["code"] for entry in semantic_search._load_entries(code_type)]
+
+    uncovered = [code for code in codes if not any(matches(code) for matches in matchers)]
+
+    assert uncovered == []
