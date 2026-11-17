@@ -4,6 +4,8 @@ from string import punctuation
 import torch
 from transformers import AutoModelForTokenClassification, AutoTokenizer
 
+from klinikatlas_search.model_loading import MODEL_LOAD_LOCK
+
 NER_MODEL_NAME = "HUMADEX/german_medical_ner"
 SCORE_THRESHOLD = 0.5
 KEYWORD_LABELS = ("PROBLEM", "TEST", "TREATMENT")
@@ -20,8 +22,14 @@ def get_device() -> torch.device:
     return torch.device("cpu")
 
 
-@lru_cache(maxsize=1)
 def load_medical_ner(model_name: str = NER_MODEL_NAME):
+    """Load tokenizer, model and device once per process (thread-safe)."""
+    with MODEL_LOAD_LOCK:
+        return _load_medical_ner(model_name)
+
+
+@lru_cache(maxsize=1)
+def _load_medical_ner(model_name: str):
     """
     Load tokenizer and medical NER model once per process.
 

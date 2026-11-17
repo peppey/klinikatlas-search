@@ -6,8 +6,11 @@ from flair.data import Sentence
 from flair.models import SequenceTagger
 from geopy.geocoders import Nominatim
 
+from klinikatlas_search.model_loading import MODEL_LOAD_LOCK
 
-tagger = SequenceTagger.load("flair/ner-german-large")
+
+with MODEL_LOAD_LOCK:
+    tagger = SequenceTagger.load("flair/ner-german-large")
 
 df = pandas.read_csv(Path(__file__).parent / "data" / "hospital_locations.txt")
 

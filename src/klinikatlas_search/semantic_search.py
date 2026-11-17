@@ -9,6 +9,7 @@ from tqdm import tqdm
 from transformers import AutoModel, AutoTokenizer
 
 from klinikatlas_search.medical_ner import get_device
+from klinikatlas_search.model_loading import MODEL_LOAD_LOCK
 
 EMBEDDING_MODEL_NAME = "permediq/SapBERT-DE"
 MAX_LENGTH = 40
@@ -23,8 +24,13 @@ CODE_TYPES = ("icd", "ops")
 _ICD_RANGE = re.compile(r"[A-Z]\d\d-[A-Z]\d\d")
 
 
-@lru_cache(maxsize=1)
 def _load_embedding_model():
+    with MODEL_LOAD_LOCK:
+        return _load_embedding_model_once()
+
+
+@lru_cache(maxsize=1)
+def _load_embedding_model_once():
     device = get_device()
     tokenizer = AutoTokenizer.from_pretrained(EMBEDDING_MODEL_NAME, use_fast=True)
     model = AutoModel.from_pretrained(EMBEDDING_MODEL_NAME).to(device)
