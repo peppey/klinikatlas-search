@@ -165,6 +165,33 @@ def get_word_label(word: dict) -> tuple[str, float]:
     return label, sum(scores[label]) / len(scores[label])
 
 
+def merge_adjacent_entities(query: str, entities: list[dict]) -> list[dict]:
+    """Merge neighbouring entities of the same type that are only separated by whitespace."""
+    merged: list[dict] = []
+
+    for entity in entities:
+        previous = merged[-1] if merged else None
+
+        if (
+            previous
+            and previous["label"] == entity["label"]
+            and previous["text"][-1].isalnum()
+            and not query[previous["end"] : entity["start"]].strip()
+        ):
+            count = previous.get("count", 1)
+            previous["score"] = (previous["score"] * count + entity["score"]) / (count + 1)
+            previous["count"] = count + 1
+            previous["end"] = entity["end"]
+            previous["text"] = query[previous["start"] : entity["end"]]
+        else:
+            merged.append(dict(entity))
+
+    for entity in merged:
+        entity.pop("count", None)
+
+    return merged
+
+
 def extract_medical_entities(
     query: str,
     tokenizer,
@@ -172,7 +199,7 @@ def extract_medical_entities(
     device,
     score_threshold: float = SCORE_THRESHOLD,
 ) -> list[dict]:
-    """Extract entities whose score is at least `score_threshold`."""
+    """Extract entities whose score is at least `score_threshold`; neighbouring words of one type form one entity."""
     predictions = predict_tokens(query, tokenizer, model, device)
     words = group_subtokens(query, predictions)
 
@@ -194,7 +221,7 @@ def extract_medical_entities(
             }
         )
 
-    return entities
+    return merge_adjacent_entities(query, entities)
 
 
 def get_medical_keywords(

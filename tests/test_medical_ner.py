@@ -1,3 +1,5 @@
+import pytest
+
 from klinikatlas_search import medical_ner
 
 
@@ -84,3 +86,59 @@ def test_get_medical_keywords_strips_punctuation(monkeypatch):
     keywords = medical_ner.get_medical_keywords("irrelevant")
 
     assert [keyword["text"] for keyword in keywords] == ["MRT", "Knie-OP"]
+
+
+def _entity(text, label, score, start):
+    return {"text": text, "label": label, "score": score, "start": start, "end": start + len(text)}
+
+
+def test_merge_adjacent_entities_joins_neighbours_of_same_type():
+    query = "Fraktur Knie"
+    entities = [_entity("Fraktur", "PROBLEM", 0.8, 0), _entity("Knie", "PROBLEM", 0.6, 8)]
+
+    merged = medical_ner.merge_adjacent_entities(query, entities)
+
+    assert len(merged) == 1
+    assert merged[0]["text"] == "Fraktur Knie"
+    assert (merged[0]["start"], merged[0]["end"]) == (0, 12)
+    assert merged[0]["score"] == pytest.approx(0.7)
+    assert "count" not in merged[0]
+
+
+def test_merge_adjacent_entities_averages_score_over_all_words():
+    query = "a b c"
+    entities = [_entity("a", "TEST", 0.9, 0), _entity("b", "TEST", 0.6, 2), _entity("c", "TEST", 0.3, 4)]
+
+    merged = medical_ner.merge_adjacent_entities(query, entities)
+
+    assert [e["text"] for e in merged] == ["a b c"]
+    assert merged[0]["score"] == pytest.approx(0.6)
+
+
+def test_merge_adjacent_entities_keeps_different_types_apart():
+    query = "Knie OP"
+    entities = [_entity("Knie", "PROBLEM", 0.9, 0), _entity("OP", "TREATMENT", 0.9, 5)]
+
+    assert [e["text"] for e in medical_ner.merge_adjacent_entities(query, entities)] == ["Knie", "OP"]
+
+
+def test_merge_adjacent_entities_does_not_cross_other_words_or_punctuation():
+    query = "Kopfschmerzen und Schwindel, Husten"
+    entities = [
+        _entity("Kopfschmerzen", "PROBLEM", 0.9, 0),
+        _entity("Schwindel,", "PROBLEM", 0.9, 18),
+        _entity("Husten", "PROBLEM", 0.9, 29),
+    ]
+
+    merged = medical_ner.merge_adjacent_entities(query, entities)
+
+    assert [e["text"] for e in merged] == ["Kopfschmerzen", "Schwindel,", "Husten"]
+
+
+def test_merge_adjacent_entities_does_not_modify_input():
+    query = "Fraktur Knie"
+    entities = [_entity("Fraktur", "PROBLEM", 0.8, 0), _entity("Knie", "PROBLEM", 0.6, 8)]
+
+    medical_ner.merge_adjacent_entities(query, entities)
+
+    assert entities[0]["text"] == "Fraktur"
