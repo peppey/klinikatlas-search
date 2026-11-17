@@ -27,7 +27,7 @@ def _(mo):
     ## Hier ein kleiner Protoype zum Ausprobieren
     [(und hier der Code dazu)](https://github.com/peppey/klinikatlas-search/tree/prototyping)
 
-    Bitte das Notebook erst einmal ausführen und dann in die Felder anstatt "Suchanfrage - Med" und "Suchanfrage - ORT" Suchbegriffe eingeben.
+    Bitte in die Felder anstatt "Suchanfrage - Med" (für medizinische Suchbegriffe) und "Suchanfrage - ORT" (für Städte) Suchbegriffe eingeben und Enter drücken.
     """)
     return
 
