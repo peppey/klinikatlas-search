@@ -1,0 +1,11 @@
+.git
+.venv
+.vscode
+.pytest_cache
+__pycache__
+*.pyc
+assets
+docs
+deploy-docs
+tests
+notebooks/__marimo__
