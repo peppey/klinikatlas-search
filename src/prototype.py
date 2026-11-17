@@ -4,6 +4,7 @@
 #     "marimo>=0.25.2",
 # ]
 # ///
+
 import marimo
 
 __generated_with = "0.24.0"
@@ -49,6 +50,7 @@ def _(mo):
 
 @app.cell
 def _(med, med_input):
+    print(type(med_input))
     keywords = med.get_medical_keywords(med_input.value, minimum_score=0.5)
     return (keywords,)
 
